@@ -48,7 +48,7 @@ public class AccountServiceImpl implements IAccountService {
 			throw new InvalidCredentialsException("Password cannot be empty.");
 		}
 		Account acFromDb = acRepo.findByEmail(ac.getEmail());
-		if (acFromDb != null) {
+		if (!Objects.isNull(acFromDb)) {
 			if (ac.getEmail().equals(acFromDb.getEmail())) {
 				if (ac.getPassword().equals(acFromDb.getPassword())) {
 					ac = acFromDb;
