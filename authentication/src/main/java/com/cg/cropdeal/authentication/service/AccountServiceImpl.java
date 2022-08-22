@@ -30,7 +30,8 @@ public class AccountServiceImpl implements IAccountService {
 			throw new InvalidCredentialsException("Name field cannot be empty.");
 		}
 
-		if (acRepo.findByEmail(ac.getEmail()) == null) {
+		Account dataFromDb = acRepo.findByEmail(ac.getEmail());
+		if (Objects.isNull(dataFromDb)) {
 			acRepo.save(ac);
 			ac.setPassword(null);
 			return ac;
