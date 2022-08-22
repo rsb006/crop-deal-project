@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+// testing sign in with email method functionality
 @ExtendWith (MockitoExtension.class)
 public class SignInTest {
 	@InjectMocks
