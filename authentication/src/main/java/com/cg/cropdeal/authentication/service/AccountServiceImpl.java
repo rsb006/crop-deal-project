@@ -17,9 +17,10 @@ public class AccountServiceImpl implements IAccountService {
 	@Autowired
 	IAccountRepository acRepo;
 
+	// sign up user with email, password and full_name
 	@Override
 	public Account signUpWithEmail (Account ac) {
-
+		// check for empty values in account object
 		if (Objects.isNull(ac.getEmail()) || ac.getEmail().isBlank()) {
 			throw new InvalidCredentialsException("Email cannot be empty.");
 		}
@@ -30,34 +31,42 @@ public class AccountServiceImpl implements IAccountService {
 			throw new InvalidCredentialsException("Name field cannot be empty.");
 		}
 
+		// check if account object already exist in database
 		Account dataFromDb = acRepo.findByEmail(ac.getEmail());
 		if (Objects.isNull(dataFromDb)) {
+			// if account object doesn't already exist in database
+			// save the account object into database
 			acRepo.save(ac);
 			ac.setPassword(null);
 			return ac;
 		}
+		// if account object already exist in database throw exception
 		throw new UserAlreadyExistsException("User account already exists.");
 	}
 
+	// sign in with email and password functionality
 	@Override
 	public Account signInWithEmail (Account ac) {
+		// check for empty values in account object
 		if (Objects.isNull(ac.getEmail()) || ac.getEmail().isBlank()) {
 			throw new InvalidCredentialsException("Username cannot be empty.");
 		}
 		if (Objects.isNull(ac.getPassword()) || ac.getPassword().isBlank()) {
 			throw new InvalidCredentialsException("Password cannot be empty.");
 		}
+		// check if account object exist in database
 		Account acFromDb = acRepo.findByEmail(ac.getEmail());
-		if (acFromDb != null) {
-			if (ac.getEmail().equals(acFromDb.getEmail())) {
-				if (ac.getPassword().equals(acFromDb.getPassword())) {
-					ac = acFromDb;
-					ac.setPassword(null);
-					return ac;
-				}
-				throw new InvalidPasswordException("Invalid password.");
+		if (!Objects.isNull(acFromDb)) {
+			// check if password is correct
+			if (ac.getPassword().equals(acFromDb.getPassword())) {
+				ac = acFromDb;
+				ac.setPassword(null);
+				return ac;
 			}
+			// throw exception if password is wrong
+			throw new InvalidPasswordException("Invalid password.");
 		}
+		// throw exception if account object is not in database
 		throw new UserNotFoundException("User does not exist.");
 	}
 }
