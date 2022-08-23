@@ -1,6 +1,7 @@
-package com.cg.cropdeal.user.service;
+package com.cg.cropdeal.user.service; 
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import com.cg.cropdeal.user.model.Address;
@@ -15,9 +16,11 @@ public class UserService implements IUserService{
 	UserRepository userRepository;
 
 	@Override
-	public User AddUser(User user) {
+	public String AddUser(User user) {
+			
+	       userRepository.save(user);
+	       return "user Added";
 		
-		return userRepository.save(user);
 	}
 
 	@Override
@@ -176,6 +179,8 @@ public class UserService implements IUserService{
 	  return user1;
 	
 	}
+	
+	
 	
 	
 

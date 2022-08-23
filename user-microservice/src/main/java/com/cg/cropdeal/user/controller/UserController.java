@@ -22,7 +22,7 @@ public class UserController {
 
 
 	@PostMapping ("/add-user")
-	public ResponseEntity<User> signUpWithEmail (@RequestBody User user) {
+	public ResponseEntity<String> signUpWithEmail (@RequestBody User user) {
 
 		return new ResponseEntity<>(userService.AddUser(user),
 		 HttpStatus.OK);
