@@ -24,6 +24,12 @@ public class Account {
 		this.fullName = fullName;
 	}
 
+	public Account (AccountRequestModel req) {
+		this.email = req.email;
+		this.password = req.password;
+		this.fullName = req.fullName;
+	}
+
 	public int getAccountId () {
 		return accountId;
 	}
