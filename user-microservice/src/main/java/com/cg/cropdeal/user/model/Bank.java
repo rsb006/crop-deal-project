@@ -22,10 +22,7 @@ public class Bank {
 	
 	@Column(nullable=false)
      private String bankIFSC ;
-     
-	public Bank() {
-	
-	}
+ 
 
 	public Bank(Long accountNo, String accountHolderName, String bankName, String bankBranch, String bankIFSC) {
 		super();
@@ -34,6 +31,10 @@ public class Bank {
 		this.bankName = bankName;
 		this.bankBranch = bankBranch;
 		this.bankIFSC = bankIFSC;
+	}
+
+	public Bank() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public Long getAccountNo() {
@@ -74,6 +75,12 @@ public class Bank {
 
 	public void setBankIFSC(String bankIFSC) {
 		this.bankIFSC = bankIFSC;
+	}
+
+	@Override
+	public String toString() {
+		return "Bank [accountNo=" + accountNo + ", accountHolderName=" + accountHolderName + ", bankName=" + bankName
+				+ ", bankBranch=" + bankBranch + ", bankIFSC=" + bankIFSC + "]";
 	}
      
 	

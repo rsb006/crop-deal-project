@@ -16,10 +16,12 @@ public class UserService implements IUserService{
 	UserRepository userRepository;
 
 	@Override
-	public String AddUser(User user) {
+	public String addUser(User user) {
 			
 	       userRepository.save(user);
+	     
 	       return "user Added";
+	       
 		
 	}
 
@@ -37,7 +39,7 @@ public class UserService implements IUserService{
 		User user=userRepository.getByUserId(userId);
 		if(user!=null) {
 			userRepository.deleteById(userId);
-			if(userRepository.getByUserId(userId)==null)
+
 				return "user deleted successfully";
 			
 		}
@@ -45,7 +47,7 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public User GetUser(Long userId) {
+	public User getUser(Long userId) {
 		
 		/*
 		 * if user data is present in database then return user
@@ -56,7 +58,7 @@ public class UserService implements IUserService{
 		 * 
 		 */
 		
-		User user=userRepository.getByUserId(userId);
+		 User user = userRepository.getByUserId(userId);
 		if(user!=null) {
 			return user;
 		}
