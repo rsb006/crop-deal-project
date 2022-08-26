@@ -1,4 +1,4 @@
-package com.cg.cropdeal.user;
+package com.cg.cropdeal.user.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +36,9 @@ class DeleteUserTest {
 
 	List<User> list=new ArrayList<>();
 	
+	
+	
+	@Order(4)
 	@Test
     void testUsingInvalidIdToDeleteUser() {
 	
@@ -43,12 +47,14 @@ class DeleteUserTest {
 	}
 	
 	@Test
+	@Order(1)
     void testWhenIdIsNull() {
 	
 	assertEquals("invalid id user not present",userService.deleteUser(null));
 	
 	}
 	
+	@Order(2)
 	@Test
      void testDatabaseRecordCount() {
 
@@ -58,23 +64,24 @@ class DeleteUserTest {
 	
 	}
 	
+	@Order(3)
 	@Test
      void testUsingValidIdToDeleteUser() {
-		
-		User user=new User();
+		var user=new User();
 		user.setUserName("Harry123");
 		user.setUserType("Dealer");
 		user.setUserId((long) 111);
 		user.setUserFullName("Harry potter");
 		user.setPassword("hp@123");
 		user.setMobileNo((long) 979876577);
-	    Bank bank =new Bank();
+		var bank =new Bank();
 	    bank.setAccountHolderName("Harry potter");
 		bank.setAccountNo((long)1324038664);
 		bank.setBankBranch("Dublin");
 		bank.setBankIFSC("BOA78754485");
 		bank.setBankName("Bank of America");
-	    Address add=new Address();
+		
+		var add=new Address();
 	    add.setCity("Boston");
 	    add.setCountry("America");
 	    add.setState("Georgia");
@@ -89,19 +96,11 @@ class DeleteUserTest {
 	    
 		list.add(user);
 		
-		when(userRepository.getByUserId(Mockito.anyLong())).thenReturn(user);
+		when(userRepository.getByUserId((long)111)).thenReturn(user);
 		assertEquals("user deleted successfully",userService.deleteUser((long)111));
 		
 	
-	}
-
-	
-	
-	
-	
-	
-	
-	
+	}	
 	
 	
 	

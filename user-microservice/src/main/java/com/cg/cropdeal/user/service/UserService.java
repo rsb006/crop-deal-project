@@ -19,7 +19,6 @@ public class UserService implements IUserService{
 	public String addUser(User user) {
 			
 	       userRepository.save(user);
-	     
 	       return "user Added";
 	       
 		
@@ -36,7 +35,7 @@ public class UserService implements IUserService{
 		 *           return msg "user deleted successfully"
 		 *     - else return msg "invalid id user not present"
 		 */
-		User user=userRepository.getByUserId(userId);
+		var user=userRepository.getByUserId(userId);
 		if(user!=null) {
 			userRepository.deleteById(userId);
 
@@ -58,7 +57,7 @@ public class UserService implements IUserService{
 		 * 
 		 */
 		
-		 User user = userRepository.getByUserId(userId);
+		var user = userRepository.getByUserId(userId);
 		if(user!=null) {
 			return user;
 		}
@@ -70,7 +69,7 @@ public class UserService implements IUserService{
 	public User updateUser(Long userId, User user) {
 		
 		//fetch user from database using given id
-        User user1=userRepository.getByUserId(userId);
+        var user1=userRepository.getByUserId(userId);
 		
         /*
          
@@ -98,7 +97,7 @@ public class UserService implements IUserService{
 		}
 		
 		
-		Bank bank1=new Bank();
+		var bank1=new Bank();
 	    if(user.getBank()!=null) {
 		
 		if(user.getBank().getAccountHolderName()!=null ) {
@@ -118,7 +117,7 @@ public class UserService implements IUserService{
         	 bank1.setBankIFSC(user.getBank().getBankIFSC());
 		}
 
-         if(user.getBank().getBankName()!=null ) {
+         if(user.getBank().getBankName()!=null ) { 
     	   bank1.setBankName(user.getBank().getBankName());
          }
          
@@ -128,7 +127,7 @@ public class UserService implements IUserService{
 		bank1=user1.getBank();
 	    }
 		
-         Address address1 =new Address();
+         var address1 =new Address();
 		
          
          if(user.getAddress()!=null) {
