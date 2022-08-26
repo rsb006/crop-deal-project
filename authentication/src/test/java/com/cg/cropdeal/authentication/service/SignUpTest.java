@@ -2,14 +2,21 @@ package com.cg.cropdeal.authentication.service;
 
 import com.cg.cropdeal.authentication.dao.IAccountRepository;
 import com.cg.cropdeal.authentication.exception.InvalidCredentialsException;
+import com.cg.cropdeal.authentication.exception.UserAlreadyExistsException;
 import com.cg.cropdeal.authentication.model.Account;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+// testing sign up with email method functionality
+
+@ExtendWith (MockitoExtension.class)
 public class SignUpTest {
 	Account account;
 	@InjectMocks
@@ -23,7 +30,8 @@ public class SignUpTest {
 		account = new Account();
 	}
 
-	//	testing InvalidCredentialsException.class
+	//*******	testing InvalidCredentialsException.class *************
+
 	@Test
 	@DisplayName ("Test exception for empty email")
 	void testEmptyEmail () {
@@ -54,5 +62,39 @@ public class SignUpTest {
 			"credentials exception");
 	}
 
+	// ************* testing UserAlreadyExistsExcepton *******************
 
+	@Test
+	@DisplayName ("Test UserAlreadyExists exception")
+	void testUserAlreadyExistsException () {
+		account.setEmail("test");
+		account.setPassword("test");
+		account.setFullName("test");
+
+		Mockito.when(accountRepo.findByEmail(Mockito.anyString())).thenReturn(account);
+		Assertions.assertThrows(UserAlreadyExistsException.class,
+		 () -> serviceClass.signUpWithEmail(account));
+	}
+
+
+	// ************** testing successful sign up with email functionality *****
+	@Test
+	@DisplayName ("Test Signup with email functionality")
+	void testSignUpWithEmail () {
+		account.setEmail("test");
+		account.setPassword("test");
+		account.setFullName("test");
+
+
+		Account returnedAccountInfo = serviceClass.signUpWithEmail(account);
+
+
+		Assertions.assertAll(
+		 () -> Assertions.assertEquals(account.getEmail(),
+			returnedAccountInfo.getEmail()),
+		 () -> Assertions.assertNull(returnedAccountInfo.getPassword()),
+		 () -> Assertions.assertEquals(account.getFullName(),
+			returnedAccountInfo.getFullName())
+		);
+	}
 }
