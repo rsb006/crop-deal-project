@@ -7,7 +7,7 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 // testing the methods in AccountServiceImpl.class
 @SelectClasses ({SignInTest.class, SignUpTest.class})
 @Suite
-@SuiteDisplayName ("Test signin and signup with email functionality")
+@SuiteDisplayName ("Test AccountService methods")
 class AccountServiceImplTest {
 
 }

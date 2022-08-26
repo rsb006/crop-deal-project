@@ -17,25 +17,25 @@ import java.time.LocalDateTime;
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler (InvalidCredentialsException.class)
-	public ResponseEntity<CustomExceptionBody> InvalidCredentialsExceptionHandler (InvalidCredentialsException ex, HttpServletRequest req) {
+	public ResponseEntity<CustomExceptionBody> invalidCredentialsExceptionHandler (InvalidCredentialsException ex, HttpServletRequest req) {
 		CustomExceptionBody exception = new CustomExceptionBody(ex.getMessage(), req.getRequestURI(), LocalDateTime.now());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler (InvalidPasswordException.class)
-	public ResponseEntity<CustomExceptionBody> InvalidPasswordExceptionHandler (InvalidPasswordException ex, HttpServletRequest req) {
+	public ResponseEntity<CustomExceptionBody> invalidPasswordExceptionHandler (InvalidPasswordException ex, HttpServletRequest req) {
 		CustomExceptionBody exception = new CustomExceptionBody(ex.getMessage(), req.getRequestURI(), LocalDateTime.now());
 		return new ResponseEntity<>(exception, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler (UserAlreadyExistsException.class)
-	public ResponseEntity<CustomExceptionBody> UserAlreadyExistsExceptionHandler (UserAlreadyExistsException ex, HttpServletRequest req) {
+	public ResponseEntity<CustomExceptionBody> userAlreadyExistsExceptionHandler (UserAlreadyExistsException ex, HttpServletRequest req) {
 		CustomExceptionBody exception = new CustomExceptionBody(ex.getMessage(), req.getRequestURI(), LocalDateTime.now());
 		return new ResponseEntity<>(exception, HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler (UserNotFoundException.class)
-	public ResponseEntity<CustomExceptionBody> UserNotFoundExceptionHandler (UserNotFoundException ex, HttpServletRequest req) {
+	public ResponseEntity<CustomExceptionBody> userNotFoundExceptionHandler (UserNotFoundException ex, HttpServletRequest req) {
 		CustomExceptionBody exception = new CustomExceptionBody(ex.getMessage(), req.getRequestURI(), LocalDateTime.now());
 		return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
 	}

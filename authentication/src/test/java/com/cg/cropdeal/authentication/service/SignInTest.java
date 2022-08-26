@@ -16,7 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 // testing sign in with email method functionality
 @ExtendWith (MockitoExtension.class)
-public class SignInTest {
+@DisplayName ("Test Signin with email service method")
+class SignInTest {
 	@InjectMocks
 	AccountServiceImpl service = new AccountServiceImpl();
 
