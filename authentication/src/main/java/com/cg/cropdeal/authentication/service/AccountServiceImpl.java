@@ -21,7 +21,7 @@ public class AccountServiceImpl implements IAccountService {
 	@Override
 	public Account signUpWithEmail (Account ac) {
 		// check for empty values in account object
-		if (Objects.isNull(ac.getEmail()) || ac.getEmail().isBlank()) {
+		if (Objects.isNull(ac.getUserName()) || ac.getUserName().isBlank()) {
 			throw new InvalidCredentialsException("Email cannot be empty.");
 		}
 		if (Objects.isNull(ac.getPassword()) || ac.getPassword().isBlank()) {
@@ -32,7 +32,7 @@ public class AccountServiceImpl implements IAccountService {
 		}
 
 		// check if account object already exist in database
-		Account dataFromDb = acRepo.findByEmail(ac.getEmail());
+		Account dataFromDb = acRepo.findByUserName(ac.getUserName());
 		if (Objects.isNull(dataFromDb)) {
 			// if account object doesn't already exist in database
 			// save the account object into database
@@ -48,14 +48,14 @@ public class AccountServiceImpl implements IAccountService {
 	@Override
 	public Account signInWithEmail (Account ac) {
 		// check for empty values in account object
-		if (Objects.isNull(ac.getEmail()) || ac.getEmail().isBlank()) {
+		if (Objects.isNull(ac.getUserName()) || ac.getUserName().isBlank()) {
 			throw new InvalidCredentialsException("Username cannot be empty.");
 		}
 		if (Objects.isNull(ac.getPassword()) || ac.getPassword().isBlank()) {
 			throw new InvalidCredentialsException("Password cannot be empty.");
 		}
 		// check if account object exist in database
-		Account acFromDb = acRepo.findByEmail(ac.getEmail());
+		Account acFromDb = acRepo.findByUserName(ac.getUserName());
 		if (!Objects.isNull(acFromDb)) {
 			// check if password is correct
 			if (ac.getPassword().equals(acFromDb.getPassword())) {

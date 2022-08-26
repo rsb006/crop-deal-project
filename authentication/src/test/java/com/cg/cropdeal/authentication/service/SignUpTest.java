@@ -46,7 +46,7 @@ class SignUpTest {
 	@Test
 	@DisplayName ("Test exception for empty password")
 	void testEmptyPassword () {
-		account.setEmail("test");
+		account.setUserName("test");
 		account.setFullName("test");
 		Assertions.assertThrows(InvalidCredentialsException.class,
 		 () -> serviceClass.signUpWithEmail(account), "should throw invalid " +
@@ -56,7 +56,7 @@ class SignUpTest {
 	@Test
 	@DisplayName ("Test exception for empty fullName")
 	void testEmptyFullName () {
-		account.setEmail("test");
+		account.setUserName("test");
 		account.setPassword("test");
 		Assertions.assertThrows(InvalidCredentialsException.class,
 		 () -> serviceClass.signUpWithEmail(account), "should throw invalid " +
@@ -68,11 +68,11 @@ class SignUpTest {
 	@Test
 	@DisplayName ("Test UserAlreadyExists exception")
 	void testUserAlreadyExistsException () {
-		account.setEmail("test");
+		account.setUserName("test");
 		account.setPassword("test");
 		account.setFullName("test");
 
-		Mockito.when(accountRepo.findByEmail(Mockito.anyString())).thenReturn(account);
+		Mockito.when(accountRepo.findByUserName(Mockito.anyString())).thenReturn(account);
 		Assertions.assertThrows(UserAlreadyExistsException.class,
 		 () -> serviceClass.signUpWithEmail(account));
 	}
@@ -82,7 +82,7 @@ class SignUpTest {
 	@Test
 	@DisplayName ("Test Signup with email functionality")
 	void testSignUpWithEmail () {
-		account.setEmail("test");
+		account.setUserName("test");
 		account.setPassword("test");
 		account.setFullName("test");
 
@@ -91,8 +91,8 @@ class SignUpTest {
 
 
 		Assertions.assertAll(
-		 () -> Assertions.assertEquals(account.getEmail(),
-			returnedAccountInfo.getEmail()),
+		 () -> Assertions.assertEquals(account.getUserName(),
+			returnedAccountInfo.getUserName()),
 		 () -> Assertions.assertNull(returnedAccountInfo.getPassword()),
 		 () -> Assertions.assertEquals(account.getFullName(),
 			returnedAccountInfo.getFullName())
