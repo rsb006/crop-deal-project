@@ -21,19 +21,12 @@ public class AuthRestController {
 	// sign up with email, password and full_name route
 	@PostMapping ("/signup")
 	public ResponseEntity<Account> signUpWithEmail (@RequestBody AccountRequestModel req) {
-		
+
 		return new ResponseEntity<>(acService.signUpWithEmail(new Account(req)),
 		 HttpStatus.OK);
 	}
 
 	// sign in with email and password route
-	@PostMapping ("/signin")
-	public ResponseEntity<Account> signInWithEmail (@RequestBody AccountRequestModel req) {
-
-		return new ResponseEntity<>(acService.signInWithEmail(new Account(req)),
-		 HttpStatus.OK);
-	}
-
 	@GetMapping ("/test")
 	public String testRoute () {
 

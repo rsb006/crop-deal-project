@@ -7,6 +7,7 @@ import com.cg.cropdeal.authentication.exception.UserAlreadyExistsException;
 import com.cg.cropdeal.authentication.exception.UserNotFoundException;
 import com.cg.cropdeal.authentication.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -16,6 +17,9 @@ public class AccountServiceImpl implements IAccountService {
 
 	@Autowired
 	IAccountRepository acRepo;
+
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 
 	// sign up user with email, password and full_name
 	@Override
@@ -36,6 +40,8 @@ public class AccountServiceImpl implements IAccountService {
 		if (Objects.isNull(dataFromDb)) {
 			// if account object doesn't already exist in database
 			// save the account object into database
+			String encryptedPwd = encoder.encode(ac.getPassword());
+			ac.setPassword(encryptedPwd);
 			acRepo.save(ac);
 			ac.setPassword(null);
 			return ac;

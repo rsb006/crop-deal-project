@@ -1,9 +1,6 @@
 package com.cg.cropdeal.authentication.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Account {
@@ -11,6 +8,7 @@ public class Account {
 	@GeneratedValue (strategy = GenerationType.AUTO)
 	private int id;
 	private String userName;
+	@Column (length = 60)
 	private String password;
 	private String fullName;
 	private Boolean active;
