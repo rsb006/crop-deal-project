@@ -4,9 +4,9 @@ import com.cg.cropdeal.user.model.User;
 
 public interface IUserService {
 	
-     User AddUser(User user);
+     String addUser(User user);
      String deleteUser(Long userId);
-     User GetUser(Long userId);
+     User getUser(Long userId);
      User updateUser(Long userId,User user);
      
      

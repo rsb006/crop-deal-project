@@ -34,9 +34,7 @@ public class User {
 	  @Column(nullable=true)
 	  private  String userStatus ;
 	
- 
-	
-	   @OneToOne(cascade =CascadeType.ALL)
+	@OneToOne(cascade =CascadeType.ALL)
 	  //@JoinColumn(name="account_no")
 	   Bank bank;
 	
@@ -123,6 +121,13 @@ public class User {
 	    public void setAddress(Address address) {
 	    	this.address = address;
 	    }
+
+		@Override
+		public String toString() {
+			return "User [userId=" + userId + ", userFullName=" + userFullName + ", userType=" + userType
+					+ ", userName=" + userName + ", password=" + password + ", mobileNo=" + mobileNo + ", emailId="
+					+ emailId + ", userStatus=" + userStatus + ", bank=" + bank + ", address=" + address + "]";
+		}
 	
 	
 

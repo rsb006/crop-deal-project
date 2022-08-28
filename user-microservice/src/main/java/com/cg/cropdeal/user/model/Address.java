@@ -12,7 +12,7 @@ public class Address {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable=false,unique=true,name="address_id"
 	)
-	private Long Id ;
+	private Long id ;
 	
 	@Column(nullable=false)
     private String	houseNo ;
@@ -35,16 +35,13 @@ public class Address {
 	@Column(nullable=false)
 	private String country ;
 	
-	public Address() {
-		
-	}
 
 	public Long getId() {
-		return Id;
+		return id;
 	}
 
-	public void setId(Long id) {
-		Id = id;
+	public void setId(Long uid) {
+		id = uid;
 	}
 
 	public String getHouseNo() {
@@ -102,6 +99,14 @@ public class Address {
 	public void setCountry(String country) {
 		this.country = country;
 	}
+
+	@Override
+	public String toString() {
+		return "Address [Id=" + id + ", houseNo=" + houseNo + ", streetName=" + streetName + ", localityName="
+				+ localityName + ", pincode=" + pincode + ", city=" + city + ", state=" + state + ", country=" + country
+				+ "]";
+	}
+	
 	
 	
 	

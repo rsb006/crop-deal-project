@@ -22,9 +22,9 @@ public class UserController {
 
 
 	@PostMapping ("/add-user")
-	public ResponseEntity<User> signUpWithEmail (@RequestBody User user) {
+	public ResponseEntity<String> addUser (@RequestBody User user) {
 
-		return new ResponseEntity<>(userService.AddUser(user),
+		return new ResponseEntity<>(userService.addUser(user),
 		 HttpStatus.OK);
 	} 
 
@@ -36,9 +36,9 @@ public class UserController {
 	}
 	
 	@GetMapping("/get-user/{userId}")
-	public ResponseEntity<User> GetUser(@PathVariable Long userId) {
+	public ResponseEntity<User> getUser(@PathVariable Long userId) {
 		
-		return new ResponseEntity<>(userService.GetUser(userId),
+		return new ResponseEntity<>(userService.getUser(userId),
 				 HttpStatus.OK);
 	}
 	
