@@ -6,6 +6,7 @@ import com.cg.cropdeal.authentication.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,10 +27,9 @@ public class AuthRestController {
 	}
 
 	// sign in with email and password route
-	@PostMapping ("/signin")
-	public ResponseEntity<Account> signInWithEmail (@RequestBody AccountRequestModel req) {
+	@GetMapping ("/test")
+	public String testRoute () {
 
-		return new ResponseEntity<>(acService.signInWithEmail(new Account(req)),
-		 HttpStatus.OK);
+		return "Hello User";
 	}
 }

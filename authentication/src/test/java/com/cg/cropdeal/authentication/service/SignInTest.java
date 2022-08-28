@@ -42,7 +42,7 @@ class SignInTest {
 	@Test
 	@DisplayName ("Test empty password")
 	void testEmptyPassword () {
-		account.setEmail("test");
+		account.setUserName("test");
 		Assertions.assertThrows(InvalidCredentialsException.class, () -> service.signInWithEmail(account), "should throw invalid credentials exception");
 	}
 
@@ -50,7 +50,7 @@ class SignInTest {
 	@Test
 	@DisplayName ("Test UserNotFoundException exception")
 	void testUserNotFoundException () {
-		account.setEmail("test");
+		account.setUserName("test");
 		account.setPassword("test");
 
 		Assertions.assertThrows(UserNotFoundException.class,
@@ -61,14 +61,14 @@ class SignInTest {
 	@Test
 	@DisplayName ("Test Signin with email functionality")
 	void testSignInWithEmail () {
-		account.setEmail("test");
+		account.setUserName("test");
 		account.setPassword("test");
 		account.setFullName("test");
 
-		Mockito.when(repository.findByEmail(Mockito.anyString())).thenReturn(account);
+		Mockito.when(repository.findByUserName(Mockito.anyString())).thenReturn(account);
 		Account returnedObj = service.signInWithEmail(account);
 		Assertions.assertAll(
-		 () -> Assertions.assertEquals(returnedObj.getEmail(), account.getEmail()),
+		 () -> Assertions.assertEquals(returnedObj.getUserName(), account.getUserName()),
 		 () -> Assertions.assertNull(returnedObj.getPassword()),
 		 () -> Assertions.assertEquals(returnedObj.getFullName(), account.getFullName())
 		);

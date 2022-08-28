@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface IAccountRepository extends JpaRepository<Account, Integer> {
 
 	//	returns an entry from account database with particular email
-	Account findByEmail (String email);
+	Account findByUserName (String userName);
 }

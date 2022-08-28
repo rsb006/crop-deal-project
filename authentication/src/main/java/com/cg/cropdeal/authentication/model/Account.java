@@ -6,44 +6,47 @@ import javax.persistence.*;
 public class Account {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
-	int accountId;
-	@Column (nullable = false, unique = true)
-	String email;
-	@Column (nullable = false)
-	String password;
-	@Column (nullable = false)
-	String fullName;
+	private int id;
+	private String userName;
+	@Column (length = 60)
+	private String password;
+	private String fullName;
+	private Boolean active;
+	private String roles;
 
 	public Account () {
 
 	}
 
-	public Account (String email, String password, String fullName) {
-		this.email = email;
+	public Account (AccountRequestModel req) {
+		this.userName = req.email;
+		this.password = req.password;
+		this.fullName = req.fullName;
+		this.active = req.active;
+		this.roles = req.roles;
+	}
+
+	public Account (String userName, String password, String fullName) {
+		this.userName = userName;
 		this.password = password;
 		this.fullName = fullName;
 	}
 
-	public Account (AccountRequestModel req) {
-		this.email = req.email;
-		this.password = req.password;
-		this.fullName = req.fullName;
+	public Account (String userName, String password, String fullName, Boolean active, String roles) {
+		this.userName = userName;
+		this.password = password;
+		this.fullName = fullName;
+		this.active = active;
+		this.roles = roles;
 	}
 
-	public int getAccountId () {
-		return accountId;
+
+	public String getUserName () {
+		return userName;
 	}
 
-	public void setAccountId (int accountId) {
-		this.accountId = accountId;
-	}
-
-	public String getEmail () {
-		return email;
-	}
-
-	public void setEmail (String email) {
-		this.email = email;
+	public void setUserName (String userName) {
+		this.userName = userName;
 	}
 
 	public String getPassword () {
@@ -62,8 +65,19 @@ public class Account {
 		this.fullName = fullName;
 	}
 
-	@Override
-	public String toString () {
-		return "Account{" + "accountId=" + accountId + ", username='" + email + '\'' + ", password='" + password + '\'' + ", fullName='" + fullName + '\'' + '}';
+	public Boolean getActive () {
+		return active;
+	}
+
+	public void setActive (Boolean active) {
+		this.active = active;
+	}
+
+	public String getRoles () {
+		return roles;
+	}
+
+	public void setRoles (String roles) {
+		this.roles = roles;
 	}
 }
