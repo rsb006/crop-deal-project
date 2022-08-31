@@ -9,52 +9,53 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class UserDetailsModel implements UserDetails {
+public class MyUserDetailsModel implements UserDetails {
 	private final String userName;
 	private final String password;
 	private final Boolean active;
 	private final List<GrantedAuthority> authorities;
-
-	public UserDetailsModel (Account user) {
+	
+	public MyUserDetailsModel(Account user) {
 		this.userName = user.getUserName();
 		this.password = user.getPassword();
 		this.active = user.getActive();
-		this.authorities = Arrays.stream(user.getRoles().split(",")).map(SimpleGrantedAuthority :: new).collect(Collectors.toList());
+		this.authorities =
+			Arrays.stream(user.getRoles().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 	}
-
-
+	
+	
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities () {
+	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
 	}
-
+	
 	@Override
-	public String getPassword () {
+	public String getPassword() {
 		return password;
 	}
-
+	
 	@Override
-	public String getUsername () {
+	public String getUsername() {
 		return userName;
 	}
-
+	
 	@Override
-	public boolean isAccountNonExpired () {
+	public boolean isAccountNonExpired() {
 		return true;
 	}
-
+	
 	@Override
-	public boolean isAccountNonLocked () {
+	public boolean isAccountNonLocked() {
 		return true;
 	}
-
+	
 	@Override
-	public boolean isCredentialsNonExpired () {
+	public boolean isCredentialsNonExpired() {
 		return true;
 	}
-
+	
 	@Override
-	public boolean isEnabled () {
+	public boolean isEnabled() {
 		return active;
 	}
 }
