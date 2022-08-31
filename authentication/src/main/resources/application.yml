@@ -22,3 +22,15 @@ spring.jpa:
 
 #Jwt secret key
 jwtSecretKey: SWFtY3JlYXRpbmdhand0aHMyNTZzZWNyZXRrZXlmb3JteXByb2plY3Rjcm9wZGVhbA==
+
+#Email service
+spring.mail:
+  host: smtp.gmail.com
+  port: 587
+  username: cropdealproject@gmail.com
+  password: hzbpvutbuylivsii
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls.enable: true

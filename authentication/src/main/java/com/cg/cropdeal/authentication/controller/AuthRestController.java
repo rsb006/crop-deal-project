@@ -6,6 +6,7 @@ import com.cg.cropdeal.authentication.model.MyUserDetailsModel;
 import com.cg.cropdeal.authentication.security.MyAuthenticationManager;
 import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
 import com.cg.cropdeal.authentication.service.AccountServiceImpl;
+import com.cg.cropdeal.authentication.service.EmailServiceImpl;
 import com.cg.cropdeal.authentication.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,17 @@ public class AuthRestController {
 	@Autowired
 	private MyUserDetailsService myUserDetailsService;
 	
+	@Autowired
+	private EmailServiceImpl emailService;
+	
 	// sign up with email, password and full_name route
 	@PostMapping("/signup")
 	public ResponseEntity<MyResponseModel> signUpWithEmail(@RequestBody AccountRequestModel req) {
 		MyUserDetailsModel userDetails = acService.signUpWithEmail(req);
 		
 		final String jwt_token = jwtUtil.generateToken(userDetails);
+		
+		emailService.welcomeMail(userDetails.getUsername(), "Anmol");
 		
 		return new ResponseEntity<>(new MyResponseModel(jwt_token), HttpStatus.OK);
 	}
