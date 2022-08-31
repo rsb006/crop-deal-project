@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.cg.cropdeal.user.model.User;
 import com.cg.cropdeal.user.repository.UserRepository;
-import com.cg.cropdeal.user.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = {UpdateUserTest.class})
@@ -35,23 +34,22 @@ class UpdateUserTest {
 
 	List<User> list=new ArrayList<>();
 	
-	/*
+	
 	@Test
 	void testUpdateUserById() {
 	 
-		User user=new User();
+		var user=new User();
 		user.setUserId((long)111);
 		user.setUserType("farmer");
 		User userdb=getUser.createUser();
-		
+		System.out.println(userdb);
 		when(userRepository.getByUserId((long) 111)).thenReturn(userdb);
 		User u1=userService.updateUser((long) 111, user);
-		when(userRepository.save(userService.updateUser((long) 111, user)) ).thenReturn(u1);
-		
+		System.out.println(u1);
 		assertEquals("farmer",u1.getUserType());
 		
 		
 	}
-	*/
+	
 
 }

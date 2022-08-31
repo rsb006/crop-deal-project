@@ -8,38 +8,52 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
+@ApiModel(description = "Details about the user")
 public class User {
 	
+	 @ApiModelProperty(notes = "unique id of user")
 	  @Id
 	  @GeneratedValue(strategy = GenerationType.AUTO)
       private Long userId ;
 	
+	 @ApiModelProperty(notes = "The user's full name")
 	  @Column(nullable=false)
       private String userFullName ;
 	
 	  @Column(nullable=false)
+	  @ApiModelProperty(notes = "type of user Farmer/Dealer")
       private String userType ;
 	
+	  @ApiModelProperty(notes = "unique username of user")
 	  private String userName ;
 	  
+	  @ApiModelProperty(notes = "password of  user")
 	  private String password ; 
 	  
+	  @ApiModelProperty(notes = "mobile number of user")
 	  @Column(nullable=false)
 	  private long mobileNo;
 	  
 	  @Column(nullable=false)
+	  @ApiModelProperty(notes = "email id of user")
 	  private String emailId;
 	
 	  @Column(nullable=true)
+	  @ApiModelProperty(notes = "Activeness of user")
 	  private  String userStatus ;
 	
 	@OneToOne(cascade =CascadeType.ALL)
+	 @ApiModelProperty(notes = "User's bank account details")
 	  //@JoinColumn(name="account_no")
 	   Bank bank;
 	
 	   @OneToOne(cascade =CascadeType.ALL)
 	  //@JoinColumn(name="address_id")
+	   @ApiModelProperty(notes = "Address of user")
 	   Address address;
 
 	    public Long getUserId() {
