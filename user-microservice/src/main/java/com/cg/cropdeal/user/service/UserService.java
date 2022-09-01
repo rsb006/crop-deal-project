@@ -9,17 +9,26 @@ import com.cg.cropdeal.user.model.Bank;
 import com.cg.cropdeal.user.model.User;
 import com.cg.cropdeal.user.repository.UserRepository;
 
+
 @Service
 public class UserService implements IUserService{
 	
 	@Autowired
 	UserRepository userRepository;
 
+	@Autowired
+	EmailSenderService emailSenderService;
+	
+	
 	@Override
 	public String addUser(User user) {
 			
 	       userRepository.save(user);
+	      
+	       emailSenderService.sendEmail(user.getEmailId(),user.getUserFullName()+" you are registered successfully..as "+user.getUserType(), "Registration Status");
+	      
 	       return "user Added";
+	       
 	       
 		
 	}
@@ -96,7 +105,23 @@ public class UserService implements IUserService{
 			user1.setUserType(user.getUserType());
 		}
 		
+		var bank1=updateBank(user,user1);
 		
+		var address1 =updateAddress(user,user1);
+		
+           user1.setBank(bank1);
+           user1.setAddress(address1);
+		
+		    userRepository.save(user1);
+		    return user1;
+	 }
+		
+	
+	  return user1;
+	
+	}
+	
+	public Bank updateBank(User user,User user1) {
 		var bank1=new Bank();
 	    if(user.getBank()!=null) {
 		
@@ -127,9 +152,12 @@ public class UserService implements IUserService{
 		bank1=user1.getBank();
 	    }
 		
-         var address1 =new Address();
+		return bank1;
+	}
+	
+	public Address updateAddress(User user,User user1) {
 		
-         
+         var address1 =new Address();
          if(user.getAddress()!=null) {
          
 		    if(user.getAddress().getCity()!=null ) {
@@ -169,19 +197,12 @@ public class UserService implements IUserService{
          	else {
         	    address1=user1.getAddress();
          	}
+		  return address1;
 		
-           user1.setBank(bank1);
-           user1.setAddress(address1);
-		
-		    return userRepository.save(user1);
-	 }
-		
-	
-	  return user1;
-	
 	}
 	
-	
+
+
 	
 	
 

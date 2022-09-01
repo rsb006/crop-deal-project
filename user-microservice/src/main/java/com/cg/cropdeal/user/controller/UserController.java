@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.cropdeal.user.model.User;
 import com.cg.cropdeal.user.service.UserService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
+@RequestMapping("/user")
+
 public class UserController {
 	
 	@Autowired
@@ -22,6 +27,9 @@ public class UserController {
 
 
 	@PostMapping ("/add-user")
+	@ApiOperation(value="Add user details",
+	notes = "enter all the required and valid user details to add the user in database",
+	response = String.class)
 	public ResponseEntity<String> addUser (@RequestBody User user) {
 
 		return new ResponseEntity<>(userService.addUser(user),
@@ -29,6 +37,9 @@ public class UserController {
 	} 
 
 	@DeleteMapping("/delete-user/{userId}")
+	@ApiOperation(value="Delete user details by id",
+	notes = "enter valid user id to be deleted from the  database",
+	response = String.class)
 	public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
 		
 		return new ResponseEntity<>(userService.deleteUser(userId),HttpStatus.OK);	
