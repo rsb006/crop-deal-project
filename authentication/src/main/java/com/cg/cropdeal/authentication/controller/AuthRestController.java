@@ -8,6 +8,7 @@ import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
 import com.cg.cropdeal.authentication.service.AccountServiceImpl;
 import com.cg.cropdeal.authentication.service.EmailServiceImpl;
 import com.cg.cropdeal.authentication.service.MyUserDetailsService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,9 @@ public class AuthRestController {
 	private EmailServiceImpl emailService;
 	
 	// sign up with email, password and full_name route
+	@Operation(summary = "Sign up using email", description = "User can sign up using an email, password, and full name" +
+		". On successful sign in, this route returns a jwt token.",
+		tags = {"Sign up"})
 	@PostMapping("/signup")
 	public ResponseEntity<MyResponseModel> signUpWithEmail(@RequestBody AccountRequestModel req) {
 		MyUserDetailsModel userDetails = acService.signUpWithEmail(req);
@@ -48,6 +52,9 @@ public class AuthRestController {
 	}
 	
 	// sign in with email and password route
+	@Operation(summary = "Sign in using email", description = "User can sign in using an email and password. On " +
+		"successful sign in, this route returns a jwt token.",
+		tags = {"Sign in"})
 	@PostMapping("/signin")
 	public ResponseEntity<MyResponseModel> signInWithEmail(@RequestBody AccountRequestModel req) {
 		myAuthenticationManager.authenticate(
@@ -61,6 +68,9 @@ public class AuthRestController {
 		return new ResponseEntity<>(new MyResponseModel(jwt_token), HttpStatus.OK);
 	}
 	
+	@Operation(summary = "Test", description = "This route returns 'Hello User' and is meant for testing purpose. This " +
+		"route will be removed in production.",
+		tags = {"Test route"})
 	@GetMapping("/test")
 	public String testRoute() {
 		
