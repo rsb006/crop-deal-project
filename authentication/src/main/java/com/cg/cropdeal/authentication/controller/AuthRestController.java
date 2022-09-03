@@ -6,6 +6,7 @@ import com.cg.cropdeal.authentication.model.MyUserDetailsModel;
 import com.cg.cropdeal.authentication.security.MyAuthenticationManager;
 import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
 import com.cg.cropdeal.authentication.service.AccountServiceImpl;
+import com.cg.cropdeal.authentication.service.SmsService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 public class AuthRestController {
 	
 	private final MyAuthenticationManager myAuthenticationManager;
-	
 	private final JwtUtil jwtUtil;
-	
 	private final AccountServiceImpl accountServiceImpl;
+	@Autowired
+	private SmsService smsService;
 	
 	@Autowired
 	public AuthRestController(MyAuthenticationManager myAuthenticationManager, JwtUtil jwtUtil,
@@ -77,7 +78,7 @@ public class AuthRestController {
 		tags = {"Test route"})
 	@GetMapping("/test")
 	public String testRoute() {
-		
+		smsService.sendSms("+918601297319");
 		return "Hello User";
 	}
 }

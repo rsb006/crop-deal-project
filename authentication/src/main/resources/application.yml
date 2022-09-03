@@ -47,6 +47,6 @@ springdoc:
 
 #SMS service twilio
 twilio:
-  auth: dN4fUIAQ1AE2eFpWfQYH2pzfjrtamEXh
-  sid: SK77a38c1ef52750846c8e98b3e75b8fb7
-  phone: 8601297319
+  auth: ad383aa0178a4703443e10533d49ef21
+  sid: AC782c7944f16b2a3eecd71891dc60228a
+  phone: +19853324222
