@@ -1,7 +1,7 @@
 package com.cg.cropdeal.authentication.security.filters;
 
 import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
-import com.cg.cropdeal.authentication.service.MyUserDetailsService;
+import com.cg.cropdeal.authentication.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +18,15 @@ import java.io.IOException;
 
 @Component
 public class MyJwtFilter extends OncePerRequestFilter {
-	@Autowired
-	private JwtUtil jwtUtil;
+	private final JwtUtil jwtUtil;
+	
+	private final AccountServiceImpl accountServiceImpl;
 	
 	@Autowired
-	private MyUserDetailsService myUserDetailsService;
+	public MyJwtFilter(JwtUtil jwtUtil, AccountServiceImpl accountServiceImpl) {
+		this.jwtUtil = jwtUtil;
+		this.accountServiceImpl = accountServiceImpl;
+	}
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -37,7 +41,7 @@ public class MyJwtFilter extends OncePerRequestFilter {
 		}
 //		check validity of the jwt token
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = myUserDetailsService.loadUserByUsername(username);
+			UserDetails userDetails = accountServiceImpl.loadUserByUsername(username);
 			if (jwtUtil.validateToken(jwt_token, userDetails)) {
 				UsernamePasswordAuthenticationToken authToken =
 					new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

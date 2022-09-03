@@ -1,13 +1,13 @@
 package com.cg.cropdeal.authentication.model;
 
-public class AccountRequestModel {
+public class MyRequestModel {
 	protected String email;
 	protected String password;
 	protected String fullName;
 	protected Boolean active;
 	protected String roles;
 	
-	public AccountRequestModel() {
+	public MyRequestModel() {
 	}
 	
 	public String getEmail() {

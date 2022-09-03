@@ -1,12 +1,11 @@
 package com.cg.cropdeal.authentication.controller;
 
-import com.cg.cropdeal.authentication.model.AccountRequestModel;
+import com.cg.cropdeal.authentication.model.MyRequestModel;
 import com.cg.cropdeal.authentication.model.MyResponseModel;
 import com.cg.cropdeal.authentication.model.MyUserDetailsModel;
 import com.cg.cropdeal.authentication.security.MyAuthenticationManager;
 import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
 import com.cg.cropdeal.authentication.service.AccountServiceImpl;
-import com.cg.cropdeal.authentication.service.MyUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,16 +17,19 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AuthRestController {
 	
-	@Autowired
-	MyAuthenticationManager myAuthenticationManager;
-	@Autowired
-	private AccountServiceImpl acService;
+	private final MyAuthenticationManager myAuthenticationManager;
+	
+	private final JwtUtil jwtUtil;
+	
+	private final AccountServiceImpl accountServiceImpl;
 	
 	@Autowired
-	private JwtUtil jwtUtil;
-	
-	@Autowired
-	private MyUserDetailsService myUserDetailsService;
+	public AuthRestController(MyAuthenticationManager myAuthenticationManager, JwtUtil jwtUtil,
+	                          AccountServiceImpl accountServiceImpl) {
+		this.myAuthenticationManager = myAuthenticationManager;
+		this.jwtUtil = jwtUtil;
+		this.accountServiceImpl = accountServiceImpl;
+	}
 	
 	
 	// sign up with email, password and full_name route
@@ -35,8 +37,8 @@ public class AuthRestController {
 		". On successful sign in, this route returns a jwt token.",
 		tags = {"Sign up"})
 	@PostMapping("/signup")
-	public ResponseEntity<MyResponseModel> signUpWithEmail(@RequestBody AccountRequestModel req) {
-		MyUserDetailsModel userDetails = acService.signUpWithEmail(req);
+	public ResponseEntity<MyResponseModel> signUpWithEmail(@RequestBody MyRequestModel req) {
+		MyUserDetailsModel userDetails = accountServiceImpl.signUpWithEmail(req);
 		
 		final String jwt_token = jwtUtil.generateToken(userDetails);
 
@@ -50,12 +52,12 @@ public class AuthRestController {
 		"successful sign in, this route returns a jwt token.",
 		tags = {"Sign in"})
 	@PostMapping("/signin")
-	public ResponseEntity<MyResponseModel> signInWithEmail(@RequestBody AccountRequestModel req) {
+	public ResponseEntity<MyResponseModel> signInWithEmail(@RequestBody MyRequestModel req) {
 		myAuthenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword())
 		);
 		
-		MyUserDetailsModel userDetails = (MyUserDetailsModel) myUserDetailsService.loadUserByUsername(req.getEmail());
+		MyUserDetailsModel userDetails = (MyUserDetailsModel) accountServiceImpl.loadUserByUsername(req.getEmail());
 		
 		final String jwt_token = jwtUtil.generateToken(userDetails);
 		
@@ -65,9 +67,9 @@ public class AuthRestController {
 	@Operation(summary = "Reset password", description = "This route is for password reset",
 		tags = {"Reset password"})
 	@PostMapping("/reset-password")
-	public ResponseEntity resetPassword(@RequestParam String email) {
+	public ResponseEntity<String> resetPassword(@RequestParam String email) {
 		
-		return ResponseEntity.ok(acService.resetPassword(email));
+		return ResponseEntity.ok(accountServiceImpl.resetPassword(email));
 	}
 	
 	@Operation(summary = "Test", description = "This route returns 'Hello User' and is meant for testing purpose. This " +

@@ -1,8 +1,7 @@
 package com.cg.cropdeal.authentication.security;
 
-import com.cg.cropdeal.authentication.service.MyUserDetailsService;
+import com.cg.cropdeal.authentication.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,20 +13,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MyAuthenticationManager implements AuthenticationManager {
-	@Autowired
-	private MyUserDetailsService myUserDetailsService;
+	private final AccountServiceImpl accountServiceImpl;
 	
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+	private final BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
+	public MyAuthenticationManager(AccountServiceImpl accountServiceImpl, BCryptPasswordEncoder passwordEncoder) {
+		this.accountServiceImpl = accountServiceImpl;
+		this.passwordEncoder = passwordEncoder;
 	}
 	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 //  check whether credentials are correct
-		UserDetails userDetails = myUserDetailsService.loadUserByUsername(authentication.getName());
+		UserDetails userDetails = accountServiceImpl.loadUserByUsername(authentication.getName());
 		
-		if (passwordEncoder().matches(authentication.getCredentials().toString(), userDetails.getPassword())) {
+		if (passwordEncoder.matches(authentication.getCredentials().toString(), userDetails.getPassword())) {
 			return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),
 				userDetails.getAuthorities());
 		}

@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailServiceImpl {
+	private final JavaMailSender javaMailSender;
+	
 	@Autowired
-	private JavaMailSender javaMailSender;
+	public EmailServiceImpl(JavaMailSender javaMailSender) {
+		this.javaMailSender = javaMailSender;
+	}
 	
 	public void welcomeMail(String to, String name) {
 		final String subject = "Welcome to CropDeal family";
