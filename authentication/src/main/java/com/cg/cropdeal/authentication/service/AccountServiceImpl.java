@@ -23,6 +23,9 @@ public class AccountServiceImpl {
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 	
+	@Autowired
+	private EmailServiceImpl emailService;
+	
 	// sign up user with email, password and full_name
 	
 	public MyUserDetailsModel signUpWithEmail(AccountRequestModel req) {
@@ -76,5 +79,17 @@ public class AccountServiceImpl {
 		}
 		// throw exception if account object is not in database
 		throw new UserNotFoundException("User does not exist.");
+	}
+	
+	public String resetPassword(String email) {
+		if (email == null || email.isBlank()) throw new InvalidCredentialsException("Email cannot be empty.");
+		
+		Account user = acRepo.findByUserName(email);
+		
+		if (user == null) throw new UserNotFoundException("User doesn't exist.");
+		
+		emailService.welcomeMail(user.getUserName(), user.getFullName());
+		
+		return "Success";
 	}
 }

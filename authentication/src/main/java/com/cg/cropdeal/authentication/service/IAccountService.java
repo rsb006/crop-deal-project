@@ -10,4 +10,6 @@ public interface IAccountService {
 	// sign in user using email, password
 	Account signInWithEmail(Account ac);
 	
+	String resetPassword(String email);
+	
 }

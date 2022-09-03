@@ -20,6 +20,8 @@ public class SecurityConfiguration {
 			.authorizeHttpRequests()
 			.antMatchers("/test")
 			.hasRole("FARMER")
+			.antMatchers("/reset-password")
+			.hasAnyRole("FARMER", "DEALER", "ADMIN")
 			.anyRequest()
 			.permitAll()
 			.and()

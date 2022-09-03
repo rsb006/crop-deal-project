@@ -6,17 +6,13 @@ import com.cg.cropdeal.authentication.model.MyUserDetailsModel;
 import com.cg.cropdeal.authentication.security.MyAuthenticationManager;
 import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
 import com.cg.cropdeal.authentication.service.AccountServiceImpl;
-import com.cg.cropdeal.authentication.service.EmailServiceImpl;
 import com.cg.cropdeal.authentication.service.MyUserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 // rest controller class for authentication microservice
 @RestController
@@ -33,8 +29,6 @@ public class AuthRestController {
 	@Autowired
 	private MyUserDetailsService myUserDetailsService;
 	
-	@Autowired
-	private EmailServiceImpl emailService;
 	
 	// sign up with email, password and full_name route
 	@Operation(summary = "Sign up using email", description = "User can sign up using an email, password, and full name" +
@@ -45,8 +39,8 @@ public class AuthRestController {
 		MyUserDetailsModel userDetails = acService.signUpWithEmail(req);
 		
 		final String jwt_token = jwtUtil.generateToken(userDetails);
-		
-		emailService.welcomeMail(userDetails.getUsername(), "Anmol");
+
+//		emailService.welcomeMail(userDetails.getUsername(), "Anmol");
 		
 		return new ResponseEntity<>(new MyResponseModel(jwt_token), HttpStatus.OK);
 	}
@@ -66,6 +60,14 @@ public class AuthRestController {
 		final String jwt_token = jwtUtil.generateToken(userDetails);
 		
 		return new ResponseEntity<>(new MyResponseModel(jwt_token), HttpStatus.OK);
+	}
+	
+	@Operation(summary = "Reset password", description = "This route is for password reset",
+		tags = {"Reset password"})
+	@PostMapping("/reset-password")
+	public ResponseEntity resetPassword(@RequestParam String email) {
+		
+		return ResponseEntity.ok(acService.resetPassword(email));
 	}
 	
 	@Operation(summary = "Test", description = "This route returns 'Hello User' and is meant for testing purpose. This " +
