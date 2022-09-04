@@ -1,17 +1,14 @@
 package com.cg.cropdeal.authentication.service;
 
 import com.cg.cropdeal.authentication.dao.IAccountRepository;
-import com.cg.cropdeal.authentication.exception.InvalidCredentialsException;
-import com.cg.cropdeal.authentication.exception.InvalidPasswordException;
-import com.cg.cropdeal.authentication.exception.UserAlreadyExistsException;
-import com.cg.cropdeal.authentication.exception.UserNotFoundException;
+import com.cg.cropdeal.authentication.exception.*;
 import com.cg.cropdeal.authentication.model.Account;
 import com.cg.cropdeal.authentication.model.MyRequestModel;
-import com.cg.cropdeal.authentication.model.MyUserDetailsModel;
+import com.cg.cropdeal.authentication.model.MyResponseModel;
+import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,75 +16,68 @@ import java.util.Objects;
 
 @Service
 public class AccountServiceImpl implements UserDetailsService, IAccountService {
-	
 	private final IAccountRepository repository;
-	
 	private final BCryptPasswordEncoder passwordEncoder;
-	
 	private final EmailServiceImpl emailService;
+	private final SmsService smsService;
+	private final JwtUtil jwtUtil;
 	
 	@Autowired
 	public AccountServiceImpl(IAccountRepository repository, BCryptPasswordEncoder passwordEncoder,
-	                          EmailServiceImpl emailService) {
+	                          EmailServiceImpl emailService, SmsService smsService, JwtUtil jwtUtil) {
 		this.repository = repository;
 		this.passwordEncoder = passwordEncoder;
 		this.emailService = emailService;
+		this.smsService = smsService;
+		this.jwtUtil = jwtUtil;
 	}
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Account user = repository.findByUserName(username);
+	public UserDetails loadUserByUsername(String email) throws UserNotFoundException {
+		Account user = repository.findByEmail(email);
 		if (user == null) {
-			throw new UsernameNotFoundException("Username not found: " + username);
+			throw new UserNotFoundException("User not found with given email: " + email);
 		}
-		return new MyUserDetailsModel(user);
+		return user;
 	}
 	
-	
 	@Override
-	public MyUserDetailsModel signUpWithEmail(MyRequestModel ac) {
-		if (Objects.isNull(ac.getEmail()) || ac.getEmail().isBlank()) {
-			throw new InvalidCredentialsException("Email cannot be empty.");
-		}
-		if (Objects.isNull(ac.getPassword()) || ac.getPassword().isBlank()) {
-			throw new InvalidCredentialsException("Password cannot be empty.");
-		}
-		if (Objects.isNull(ac.getFullName()) || ac.getFullName().isBlank()) {
-			throw new InvalidCredentialsException("Name field cannot be empty.");
+	public MyResponseModel signUpWithEmail(MyRequestModel req) {
+		if (!req.signUpValidation()) {
+			throw new InvalidCredentialsException("Field(s) cannot be empty.");
 		}
 		
 		// check if account object already exist in database
-		Account dataFromDb = repository.findByUserName(ac.getEmail());
+		Account dataFromDb = repository.findByEmail(req.getEmail());
 		if (Objects.isNull(dataFromDb)) {
 			// if account object doesn't already exist in database
 			// save the account object into database
-			String encryptedPwd = passwordEncoder.encode(ac.getPassword());
-			ac.setPassword(encryptedPwd);
-			Account account = new Account(ac);
+			String encryptedPwd = passwordEncoder.encode(req.getPassword());
+			req.setPassword(encryptedPwd);
+			Account account = new Account(req);
 			repository.save(account);
-			return new MyUserDetailsModel(account);
+			String JWT_TOKEN = jwtUtil.generateToken(account);
+			return new MyResponseModel(JWT_TOKEN);
 		}
 		// if account object already exist in database throw exception
 		throw new UserAlreadyExistsException("User account already exists.");
 	}
 	
 	@Override
-	public MyUserDetailsModel signInWithEmail(Account ac) {
+	public MyResponseModel signInWithEmail(MyRequestModel req) {
 		// check for empty values in account object
-		if (Objects.isNull(ac.getUserName()) || ac.getUserName().isBlank()) {
-			throw new InvalidCredentialsException("Username cannot be empty.");
+		if (!req.signInValidation()) {
+			throw new InvalidCredentialsException("Email/Password field(s) cannot be empty.");
 		}
-		if (Objects.isNull(ac.getPassword()) || ac.getPassword().isBlank()) {
-			throw new InvalidCredentialsException("Password cannot be empty.");
-		}
+		
 		// check if account object exist in database
-		Account acFromDb = repository.findByUserName(ac.getUserName());
-		if (!Objects.isNull(acFromDb)) {
+		Account account = repository.findByEmail(req.getEmail());
+		if (!Objects.isNull(account)) {
 			// check if password is correct
-			if (ac.getPassword().equals(acFromDb.getPassword())) {
-				ac = acFromDb;
-				ac.setPassword(null);
-				return new MyUserDetailsModel(ac);
+			String encryptedPwd = passwordEncoder.encode(req.getPassword());
+			if (encryptedPwd.equals(account.getPassword())) {
+				String JWT_TOKEN = jwtUtil.generateToken(account);
+				return new MyResponseModel(JWT_TOKEN);
 			}
 			// throw exception if password is wrong
 			throw new InvalidPasswordException("Invalid password.");
@@ -96,16 +86,56 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 		throw new UserNotFoundException("User does not exist.");
 	}
 	
+	
+	public Boolean validateOTP(MyRequestModel req) {
+		String otp = req.getResetCode();
+		if (otp != null && !otp.isBlank()) {
+			Account account = repository.findByResetCode(otp);
+			return account != null;
+		}
+		return false;
+	}
+	
 	@Override
-	public String resetPassword(String email) {
-		if (email == null || email.isBlank()) throw new InvalidCredentialsException("Email cannot be empty.");
+	public MyResponseModel resetPassword(MyRequestModel req) {
+		if (!req.resetPasswordValidation()) {
+			throw new InvalidCredentialsException("Password/Reset-token field(s) cannot be empty.");
+		}
 		
-		Account user = repository.findByUserName(email);
+		String resetCode = req.getResetCode();
+		String password = req.getPassword();
 		
-		if (user == null) throw new UserNotFoundException("User doesn't exist.");
+		Account account = repository.findByResetCode(resetCode);
 		
-		emailService.welcomeMail(user.getUserName(), user.getFullName());
+		if (account != null && account.getResetCode().equals(resetCode)) {
+			String encryptedPassword = passwordEncoder.encode(password);
+			account.setPassword(encryptedPassword);
+			account.setResetCode(null);
+			repository.save(account);
+			String JWT_TOKEN = jwtUtil.generateToken(account);
+			return new MyResponseModel(JWT_TOKEN);
+		}
 		
-		return "Success";
+		throw new InvalidSessionException("Invalid session. Please try " + "again later.");
+	}
+	
+	public String forgotPassword(String email) {
+		if (email == null || email.isBlank()) throw new InvalidCredentialsException("Email field cannot be empty.");
+		
+		Account account = repository.findByEmail(email);
+		
+		if (account == null) throw new UserNotFoundException("User with email: " + email + " not found.");
+		
+		// reset options means in how many ways a user can reset password.
+//		using email only (resetOptions == 1) or using email and sms otp (resetOptions == 2)
+		Integer resetOptions = 1;
+		
+		if (account.getPhoneNumber() != null) {
+			resetOptions = 2;
+		}
+		
+		final String RESPONSE = "reset-options&" + resetOptions;
+		
+		return RESPONSE;
 	}
 }

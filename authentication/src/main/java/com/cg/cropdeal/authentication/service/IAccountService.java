@@ -1,16 +1,16 @@
 package com.cg.cropdeal.authentication.service;
 
-import com.cg.cropdeal.authentication.model.Account;
-import com.cg.cropdeal.authentication.model.MyRequestModel;
-import com.cg.cropdeal.authentication.model.MyUserDetailsModel;
 
-public interface IAccountService {
-	// sign up user using email, password and fullname
-	MyUserDetailsModel signUpWithEmail(MyRequestModel ac);
+import com.cg.cropdeal.authentication.model.MyRequestModel;
+import com.cg.cropdeal.authentication.model.MyResponseModel;
+
+interface IAccountService {
+//	INTERFACE WITH NECESSARY METHODS
 	
-	// sign in user using email, password
-	MyUserDetailsModel signInWithEmail(Account ac);
+	MyResponseModel signInWithEmail(MyRequestModel req);
 	
-	String resetPassword(String email);
+	MyResponseModel signUpWithEmail(MyRequestModel req);
+	
+	MyResponseModel resetPassword(MyRequestModel req);
 	
 }

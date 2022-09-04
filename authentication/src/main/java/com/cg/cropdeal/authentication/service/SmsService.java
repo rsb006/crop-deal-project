@@ -8,22 +8,28 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SmsService {
-	private final String msg = "Hi";
 	
 	@Value("${twilio.phone}")
-	private String phone;
+	private String from_phone;
 	@Value("${twilio.auth}")
 	private String auth_token;
 	@Value("${twilio.sid}")
 	private String account_sid;
 	
-	public String sendSms(String to_phone) {
+	private void sendSms(String to_phone, String msg) {
 		Twilio.init(account_sid, auth_token);
 		PhoneNumber toPhone = new PhoneNumber(to_phone);
-		PhoneNumber fromPhone = new PhoneNumber(phone);
+		PhoneNumber fromPhone = new PhoneNumber(from_phone);
 		
 		Message message = Message.creator(toPhone, fromPhone, msg).create();
 		
-		return message.getSid();
+		System.out.println(message.getSid());
+	}
+	
+	public void sendOTP(String to_phone, String otp) {
+		final String MSG = "This OTP is valid for 10 minutes only. Please use this one-time-password for resetting your " +
+			"account password. OTP: " + otp;
+		
+		sendSms(to_phone, MSG);
 	}
 }

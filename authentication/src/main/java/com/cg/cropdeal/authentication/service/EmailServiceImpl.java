@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 public class EmailServiceImpl {
 	private final JavaMailSender javaMailSender;
 	
+	private final String FROM = "noreply-cropdealproject@gmail.com";
+	
 	@Autowired
 	public EmailServiceImpl(JavaMailSender javaMailSender) {
 		this.javaMailSender = javaMailSender;
@@ -18,8 +20,19 @@ public class EmailServiceImpl {
 		final String subject = "Welcome to CropDeal family";
 		final String text = String.format("Dear %s, your account has been successfully created.", name);
 		
+		sendMail(to, name, subject, text);
+	}
+	
+	public void resetPasswordMail(String to, String name, String link) {
+		final String subject = "Reset CropDeal account password";
+		final String text = "Click on this link or copy-paste it in the address bar to reset your password. Link: " + link;
+		
+		sendMail(to, name, subject, text);
+	}
+	
+	private void sendMail(String to, String name, String subject, String text) {
 		SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-		simpleMailMessage.setFrom("noreply-cropdealproject@gmail.com");
+		simpleMailMessage.setFrom(FROM);
 		simpleMailMessage.setTo(to);
 		simpleMailMessage.setSubject(subject);
 		simpleMailMessage.setText(text);
