@@ -24,10 +24,6 @@ public class SecurityConfiguration {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 			.authorizeHttpRequests()
-			.antMatchers("/test")
-			.hasRole("FARMER")
-			.antMatchers("/reset-password")
-			.hasAnyRole("FARMER", "DEALER", "ADMIN")
 			.anyRequest()
 			.permitAll()
 			.and()

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 // rest controller class for authentication microservice
 @RestController
 public class AuthRestController {
@@ -57,24 +59,26 @@ public class AuthRestController {
 		description = "This route is for password reset. User will be validated and " + "given options for resetting.",
 		tags = {"Reset password"})
 	@PostMapping("/forgot-password")
-	public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+	public ResponseEntity<String> forgotPassword(HttpServletRequest req, @RequestParam String email,
+	                                             @RequestParam String method) {
 		
-		return ResponseEntity.ok(accountServiceImpl.forgotPassword(email));
+		return ResponseEntity.ok(accountServiceImpl.forgotPassword(req.getRequestURL().toString(), email, method));
 	}
 	
 	
 	//	RESET PASSWORD
 	@Operation(summary = "Reset password", description = "This route is for password reset", tags = {"Reset password"})
-	@PostMapping("/reset-password")
-	public ResponseEntity<MyResponseModel> resetPassword(@RequestBody MyRequestModel req) {
+	@PostMapping("/forgot-password/reset")
+	public ResponseEntity<MyResponseModel> resetPassword(@RequestBody MyRequestModel req,
+	                                                     @RequestParam String resetToken) {
 		
-		return ResponseEntity.ok(accountServiceImpl.resetPassword(req));
+		return ResponseEntity.ok(accountServiceImpl.resetPassword(req, resetToken));
 	}
 	
 	//	VALIDATE OTP
 	@Operation(summary = "Validate OTP", description = "This route is for password reset using SMS.",
 		tags = {"Reset " + "password"})
-	@PostMapping("/reset-password")
+	@PostMapping("/otp-reset")
 	public ResponseEntity<Boolean> validateOTP(@RequestBody MyRequestModel req) {
 		
 		return ResponseEntity.ok(accountServiceImpl.validateOTP(req));
