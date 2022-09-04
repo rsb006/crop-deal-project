@@ -26,6 +26,12 @@ spring.jpa:
 #Jwt secret key
 jwtSecretKey: SWFtY3JlYXRpbmdhand0aHMyNTZzZWNyZXRrZXlmb3JteXByb2plY3Rjcm9wZGVhbA==
 
+#Java keystore
+keyStore:
+  password: keystorepassword
+  key:
+    password: keypassword
+
 #Email service
 spring.mail:
   host: smtp.gmail.com

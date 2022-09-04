@@ -1,15 +1,19 @@
 package com.cg.cropdeal.authentication.security.jwt;
 
+import com.cg.cropdeal.authentication.security.KeyStoreService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,15 +23,16 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 	
-	// get key from config
-	@Value("${jwtSecretKey}")
-	private String secretKey;
+	private final KeyStoreService keyStoreService;
+	private final SecretKey secretKey;
 	
-	//	method to create a signing key for jwt token
-	private Key getSigningKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
-		return Keys.hmacShaKeyFor(keyBytes);
+	@Autowired
+	public JwtUtil(KeyStoreService keyStoreService)
+		throws UnrecoverableEntryException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
+		this.keyStoreService = keyStoreService;
+		secretKey = keyStoreService.loadKeyStore();
 	}
+	
 	
 	//retrieve username from jwt token
 	public String getUsernameFromToken(String token) {
@@ -70,7 +75,7 @@ public class JwtUtil {
 		return Jwts.builder().setClaims(claims).setSubject(subject)
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + (5 * 60 * 60 * 1000)))
-			.signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+			.signWith(secretKey, SignatureAlgorithm.HS256).compact();
 	}
 	
 	//validate token

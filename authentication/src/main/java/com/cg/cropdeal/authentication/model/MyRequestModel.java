@@ -78,7 +78,7 @@ public class MyRequestModel {
 	
 	public Boolean resetPasswordValidation() {
 		// returns true if object is valid
-		return !password.isBlank() && !resetCode.isBlank();
+		return !password.isBlank();
 	}
 	
 }

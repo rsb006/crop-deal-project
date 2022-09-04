@@ -11,6 +11,6 @@ interface IAccountService {
 	
 	MyResponseModel signUpWithEmail(MyRequestModel req);
 	
-	MyResponseModel resetPassword(MyRequestModel req);
+	MyResponseModel resetPassword(MyRequestModel req, String resetToken);
 	
 }
