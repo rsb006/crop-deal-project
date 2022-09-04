@@ -2,10 +2,12 @@ package com.cg.cropdeal.authentication.service;
 
 import com.cg.cropdeal.authentication.dao.IAccountRepository;
 import com.cg.cropdeal.authentication.exception.*;
+import com.cg.cropdeal.authentication.exception.handler.PhoneNumberNotFoundException;
 import com.cg.cropdeal.authentication.model.Account;
 import com.cg.cropdeal.authentication.model.MyRequestModel;
 import com.cg.cropdeal.authentication.model.MyResponseModel;
 import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -74,8 +76,7 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 		Account account = repository.findByEmail(req.getEmail());
 		if (!Objects.isNull(account)) {
 			// check if password is correct
-			String encryptedPwd = passwordEncoder.encode(req.getPassword());
-			if (encryptedPwd.equals(account.getPassword())) {
+			if (passwordEncoder.matches(req.getPassword(), account.getPassword())) {
 				String JWT_TOKEN = jwtUtil.generateToken(account);
 				return new MyResponseModel(JWT_TOKEN);
 			}
@@ -97,17 +98,16 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 	}
 	
 	@Override
-	public MyResponseModel resetPassword(MyRequestModel req) {
+	public MyResponseModel resetPassword(MyRequestModel req, String resetToken) {
 		if (!req.resetPasswordValidation()) {
 			throw new InvalidCredentialsException("Password/Reset-token field(s) cannot be empty.");
 		}
 		
-		String resetCode = req.getResetCode();
 		String password = req.getPassword();
 		
-		Account account = repository.findByResetCode(resetCode);
+		Account account = repository.findByResetCode(resetToken);
 		
-		if (account != null && account.getResetCode().equals(resetCode)) {
+		if (account != null && account.getResetCode().equals(resetToken)) {
 			String encryptedPassword = passwordEncoder.encode(password);
 			account.setPassword(encryptedPassword);
 			account.setResetCode(null);
@@ -119,23 +119,38 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 		throw new InvalidSessionException("Invalid session. Please try " + "again later.");
 	}
 	
-	public String forgotPassword(String email) {
+	public String forgotPassword(String url, String email, String method) {
 		if (email == null || email.isBlank()) throw new InvalidCredentialsException("Email field cannot be empty.");
 		
 		Account account = repository.findByEmail(email);
 		
 		if (account == null) throw new UserNotFoundException("User with email: " + email + " not found.");
-		
-		// reset options means in how many ways a user can reset password.
-//		using email only (resetOptions == 1) or using email and sms otp (resetOptions == 2)
-		Integer resetOptions = 1;
-		
-		if (account.getPhoneNumber() != null) {
-			resetOptions = 2;
+
+//		if method value is otp, only then we will send sms, else we will send email
+		if (method.equalsIgnoreCase("otp")) {
+			
+			if (account.getPhoneNumber() == null) throw new PhoneNumberNotFoundException("Phone number not found.");
+			
+			Double otp = (Math.random() * 10000 + Math.random() * 1000 + Math.random() * 100 + Math.random() * 10);
+			
+			account.setResetCode(otp.toString());
+			repository.save(account);
+			
+			smsService.sendOTP(account.getPhoneNumber(), otp.toString());
+			
+			return "Sms sent.";
+		} else {
+			final String resetCode = RandomString.make(20);
+			
+			account.setResetCode(resetCode);
+			repository.save(account);
+			
+			final String link = url + "/reset?token=" + resetCode;
+			
+			emailService.resetPasswordMail(account.getUsername(), account.getFullName(), link);
+			
+			return "Email sent.";
 		}
-		
-		final String RESPONSE = "reset-options&" + resetOptions;
-		
-		return RESPONSE;
 	}
+	
 }

@@ -22,7 +22,7 @@ public class Account implements UserDetails {
 	private String fullName;
 	private Boolean active;
 	private String roles;
-	@Column(length = 10)
+	@Column(length = 13)
 	private String phoneNumber;
 	@Column(length = 20)
 	private String resetCode = null;
