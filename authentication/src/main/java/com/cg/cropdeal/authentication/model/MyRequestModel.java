@@ -6,9 +6,8 @@ public class MyRequestModel {
 	protected String fullName;
 	protected Boolean active;
 	protected String roles;
-	
-	public MyRequestModel() {
-	}
+	protected String phoneNumber;
+	protected String resetCode;
 	
 	public String getEmail() {
 		return email;
@@ -50,14 +49,36 @@ public class MyRequestModel {
 		this.roles = roles;
 	}
 	
-	@Override
-	public String toString() {
-		return "AccountRequestModel{" +
-			"email='" + email + '\'' +
-			", password='" + password + '\'' +
-			", fullName='" + fullName + '\'' +
-			", active=" + active +
-			", roles='" + roles + '\'' +
-			'}';
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
+	
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	
+	public String getResetCode() {
+		return resetCode;
+	}
+	
+	public void setResetCode(String resetCode) {
+		this.resetCode = resetCode;
+	}
+	
+	//	util methods to validate
+	public Boolean signUpValidation() {
+		// returns true if object is valid
+		return !email.isBlank() && !password.isBlank() && !fullName.isBlank() && active && !roles.isBlank();
+	}
+	
+	public Boolean signInValidation() {
+		// returns true if object is valid
+		return !email.isBlank() && !password.isBlank();
+	}
+	
+	public Boolean resetPasswordValidation() {
+		// returns true if object is valid
+		return !password.isBlank() && !resetCode.isBlank();
+	}
+	
 }

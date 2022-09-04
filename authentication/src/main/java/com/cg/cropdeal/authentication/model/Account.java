@@ -1,47 +1,94 @@
 package com.cg.cropdeal.authentication.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Entity
-public class Account {
+public class Account implements UserDetails {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	@Column(length = 60)
-	private String userName;
+	private String email;
 	@Column(length = 60)
 	private String password;
 	private String fullName;
 	private Boolean active;
 	private String roles;
+	@Column(length = 10)
+	private String phoneNumber;
+	@Column(length = 20)
+	private String resetCode = null;
 	
 	public Account() {
 	
 	}
 	
-	public Account(MyRequestModel req) {
-		this.userName = req.email;
-		this.password = req.password;
-		this.fullName = req.fullName;
-		this.active = req.active;
-		this.roles = req.roles;
+	public Account(MyRequestModel requestModel) {
+		this.email = requestModel.email;
+		this.password = requestModel.password;
+		this.fullName = requestModel.fullName;
+		this.active = requestModel.active;
+		this.roles = requestModel.roles;
+		this.phoneNumber = requestModel.phoneNumber;
+		this.resetCode = requestModel.resetCode;
 	}
 	
-	
-	public String getUserName() {
-		return userName;
+	//	OVERRIDING METHODS FROM USERDETAILS INTERFACE
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return Arrays.stream(roles.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 	}
 	
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-	
+	@Override
 	public String getPassword() {
-		return password;
+		return this.password;
 	}
 	
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	@Override
+	public String getUsername() {
+		return this.email;
+	}
+	
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+	
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+	
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+//	GETTERS AND SETTERS
+	
+	@Override
+	public boolean isEnabled() {
+		return active;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 	public String getFullName() {
@@ -66,5 +113,21 @@ public class Account {
 	
 	public void setRoles(String roles) {
 		this.roles = roles;
+	}
+	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	
+	public String getResetCode() {
+		return resetCode;
+	}
+	
+	public void setResetCode(String resetCode) {
+		this.resetCode = resetCode;
 	}
 }
