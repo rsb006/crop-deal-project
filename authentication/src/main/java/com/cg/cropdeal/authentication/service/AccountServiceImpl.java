@@ -131,7 +131,7 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 			
 			if (account.getPhoneNumber() == null) throw new PhoneNumberNotFoundException("Phone number not found.");
 			
-			Double otp = (Math.random() * 10000 + Math.random() * 1000 + Math.random() * 100 + Math.random() * 10);
+			Double otp = Math.floor(Math.random() * 10000 + Math.random() * 1000 + Math.random() * 100 + Math.random() * 10);
 			
 			account.setResetCode(otp.toString());
 			repository.save(account);
