@@ -1,6 +1,7 @@
 package com.cg.cropdeal.authentication.service;
 
 
+import com.cg.cropdeal.authentication.model.Account;
 import com.cg.cropdeal.authentication.model.MyRequestModel;
 import com.cg.cropdeal.authentication.model.MyResponseModel;
 
@@ -12,5 +13,10 @@ interface IAccountService {
 	MyResponseModel signUpWithEmail(MyRequestModel req);
 	
 	MyResponseModel resetPassword(MyRequestModel req, String resetToken);
+	
+	String forgotPassword(String url, String email, String method);
+	
+	Account validateToken(String token);
+	
 	
 }

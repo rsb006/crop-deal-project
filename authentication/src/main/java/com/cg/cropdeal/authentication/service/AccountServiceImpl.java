@@ -119,6 +119,7 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 		throw new InvalidSessionException("Invalid session. Please try " + "again later.");
 	}
 	
+	@Override
 	public String forgotPassword(String url, String email, String method) {
 		if (email == null || email.isBlank()) throw new InvalidCredentialsException("Email field cannot be empty.");
 		
@@ -153,4 +154,19 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 		}
 	}
 	
+	@Override
+	//	helper method for api gateway to validate token
+	public Account validateToken(String token) {
+		if (token == null || token.isBlank()) throw new InvalidCredentialsException("Token cannot be empty.");
+//		get the subject from token
+		String subject = jwtUtil.getUsernameFromToken(token);
+//		fetch the data from backend
+		Account account = repository.findByEmail(subject);
+//		validate
+		if (jwtUtil.validateToken(token, account)) {
+			account.setPassword(null);
+			return account;
+		}
+		throw new UserNotFoundException("Invalid token");
+	}
 }
