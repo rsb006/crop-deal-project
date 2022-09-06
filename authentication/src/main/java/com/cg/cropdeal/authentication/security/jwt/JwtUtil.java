@@ -1,19 +1,15 @@
 package com.cg.cropdeal.authentication.security.jwt;
 
-import com.cg.cropdeal.authentication.security.KeyStoreService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,17 +18,13 @@ import java.util.function.Function;
 // utility class for jwt related methods
 @Component
 public class JwtUtil {
+	@Value("${jwtSecretKey}")
+	private String secretKey;
 	
-	private final KeyStoreService keyStoreService;
-	private final SecretKey secretKey;
-	
-	@Autowired
-	public JwtUtil(KeyStoreService keyStoreService)
-		throws UnrecoverableEntryException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException {
-		this.keyStoreService = keyStoreService;
-		secretKey = keyStoreService.loadKeyStore();
+	private SecretKey getSigningKey() {
+		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		return Keys.hmacShaKeyFor(keyBytes);
 	}
-	
 	
 	//retrieve username from jwt token
 	public String getUsernameFromToken(String token) {
@@ -50,7 +42,8 @@ public class JwtUtil {
 	}
 	
 	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+		SecretKey signingKey = getSigningKey();
+		return Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token).getBody();
 	}
 	
 	//check if the token has expired
@@ -71,11 +64,12 @@ public class JwtUtil {
 	//3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
 	//   compaction of the JWT to a URL-safe string
 	private String doGenerateToken(Map<String, Object> claims, String subject) {
+		SecretKey signingKey = getSigningKey();
 //		5 hours expiration time
 		return Jwts.builder().setClaims(claims).setSubject(subject)
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + (5 * 60 * 60 * 1000)))
-			.signWith(secretKey, SignatureAlgorithm.HS256).compact();
+			.signWith(signingKey, SignatureAlgorithm.HS256).compact();
 	}
 	
 	//validate token
