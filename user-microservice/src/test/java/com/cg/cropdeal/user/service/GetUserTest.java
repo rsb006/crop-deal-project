@@ -17,7 +17,6 @@ import com.cg.cropdeal.user.model.Address;
 import com.cg.cropdeal.user.model.Bank;
 import com.cg.cropdeal.user.model.User;
 import com.cg.cropdeal.user.repository.UserRepository;
-import com.cg.cropdeal.user.service.UserService;
 
 
 @ExtendWith(MockitoExtension.class)
