@@ -22,7 +22,7 @@
     </properties>
     <dependencies>
 
-        <!-- starter dependencies for web, eureka, data-jpa, security, mail, springfox -->
+        <!-- starter dependencies for web, eureka, data-jpa, security, mail, springfox, config -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -52,6 +52,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
             <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
         <!-- for mysql driver -->
