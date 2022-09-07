@@ -1,6 +1,0 @@
-server.port: 8888
-#Github config
-spring.cloud.config.server.git:
-  uri: "https://github.com/ash-1908/cropdeal-auth-config.git"
-  username: ash-1908
-  password: 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
