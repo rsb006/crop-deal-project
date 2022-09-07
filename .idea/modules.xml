@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/authentication/authentication.iml" filepath="$PROJECT_DIR$/authentication/authentication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloudconfig/cloudconfig.iml" filepath="$PROJECT_DIR$/cloudconfig/cloudconfig.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/crop-deal-project.iml" filepath="$PROJECT_DIR$/.idea/crop-deal-project.iml" />
       <module fileurl="file://$PROJECT_DIR$/discovery-server/discovery-server.iml" filepath="$PROJECT_DIR$/discovery-server/discovery-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
