@@ -75,6 +75,9 @@ public class Bank {
 	public void setBankIFSC(String bankIFSC) {
 		this.bankIFSC = bankIFSC;
 	}
+	
+	
+	
 
 	@Override
 	public String toString() {

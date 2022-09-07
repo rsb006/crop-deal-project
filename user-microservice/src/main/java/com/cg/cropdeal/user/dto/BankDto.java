@@ -14,6 +14,7 @@ public class BankDto {
 
      private String bankIFSC ;
 
+
 	public BankDto(Long accountNo, String accountHolderName, String bankName, String bankBranch, String bankIFSC) {
 		super();
 		this.accountNo = accountNo;
@@ -69,13 +70,13 @@ public class BankDto {
 	
 	public Bank getBankFromBankDto(BankDto bankdto) {
 		
-		Bank bank=new Bank();
-		bank.setAccountHolderName(bankdto.getAccountHolderName());
-		bank.setAccountNo(bankdto.getAccountNo());
-		bank.setBankBranch(bankdto.getBankBranch());
-		bank.setBankIFSC(bankdto.getBankIFSC());
-		bank.setBankName(bankdto.getBankName());
-		return bank;
+		var bank1=new Bank();
+		bank1.setAccountHolderName(bankdto.getAccountHolderName());
+		bank1.setAccountNo(bankdto.getAccountNo());
+		bank1.setBankBranch(bankdto.getBankBranch());
+		bank1.setBankIFSC(bankdto.getBankIFSC());
+		bank1.setBankName(bankdto.getBankName());
+		return bank1;
 	} 
      
      

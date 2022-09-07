@@ -9,6 +9,6 @@ import com.cg.cropdeal.user.model.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 
 	User getByUserId(Long userId);
- 
+    User getByUserName(String username);
 	
 }

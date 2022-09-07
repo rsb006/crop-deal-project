@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cg.cropdeal.user.dto.UserDto;
 import com.cg.cropdeal.user.model.User;
 import com.cg.cropdeal.user.service.UserService;
 
@@ -25,14 +26,13 @@ public class UserController {
 	@Autowired
 	private UserService userService; 
 
-
 	@PostMapping ("/add-user")
 	@ApiOperation(value="Add user details",
 	notes = "enter all the required and valid user details to add the user in database",
 	response = String.class)
-	public ResponseEntity<String> addUser (@RequestBody User user) {
+	public ResponseEntity<String> addUser (@RequestBody UserDto userDto) {
 
-		return new ResponseEntity<>(userService.addUser(user),
+		return new ResponseEntity<>(userService.addUser(userDto),
 		 HttpStatus.OK);
 	} 
 

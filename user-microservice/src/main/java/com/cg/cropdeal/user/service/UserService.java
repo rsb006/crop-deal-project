@@ -1,9 +1,11 @@
+
 package com.cg.cropdeal.user.service; 
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import com.cg.cropdeal.user.dto.UserDto;
 import com.cg.cropdeal.user.model.Address;
 import com.cg.cropdeal.user.model.Bank;
 import com.cg.cropdeal.user.model.User;
@@ -18,14 +20,16 @@ public class UserService implements IUserService{
 
 	@Autowired
 	EmailSenderService emailSenderService;
-	
+
 	
 	@Override
-	public String addUser(User user) {
+	public String addUser(UserDto userDto) {
 			
+		   var user=userDto.getUserFromUserDto(userDto);
+		   
 	       userRepository.save(user);
 	      
-	       emailSenderService.sendEmail(user.getEmailId(),user.getUserFullName()+" you are registered successfully..as "+user.getUserType(), "Registration Status");
+	      //emailSenderService.sendEmail(user.getEmailId(),user.getUserFullName()+" you are registered successfully..as "+user.getUserType(), "Registration Status");
 	      
 	       return "user Added";
 	       
@@ -122,7 +126,7 @@ public class UserService implements IUserService{
 	}
 	
 	public Bank updateBank(User user,User user1) {
-		var bank1=new Bank();
+		var bank1=user1.getBank();
 	    if(user.getBank()!=null) {
 		
 		if(user.getBank().getAccountHolderName()!=null ) {
@@ -157,7 +161,7 @@ public class UserService implements IUserService{
 	
 	public Address updateAddress(User user,User user1) {
 		
-         var address1 =new Address();
+         var address1 =user1.getAddress();
          if(user.getAddress()!=null) {
          
 		    if(user.getAddress().getCity()!=null ) {
@@ -200,7 +204,6 @@ public class UserService implements IUserService{
 		  return address1;
 		
 	}
-	
 
 
 	

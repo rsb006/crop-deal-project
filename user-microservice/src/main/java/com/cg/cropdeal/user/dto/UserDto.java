@@ -1,7 +1,7 @@
 package com.cg.cropdeal.user.dto;
 
-import com.cg.cropdeal.user.model.Address;
-import com.cg.cropdeal.user.model.Bank;
+import java.util.List;
+
 import com.cg.cropdeal.user.model.User;
 
 public class UserDto {
@@ -26,9 +26,12 @@ public class UserDto {
 	  BankDto bank;
 
 	  AddressDto address;
+	  
+	 
+	
 
 	public UserDto(Long userId, String userFullName, String userType, String userName, String password, long mobileNo,
-			String emailId, String userStatus,  BankDto bank, AddressDto address) {
+			String emailId, String userStatus, BankDto bank, AddressDto address) {
 		super();
 		this.userId = userId;
 		this.userFullName = userFullName;
@@ -40,6 +43,7 @@ public class UserDto {
 		this.userStatus = userStatus;
 		this.bank = bank;
 		this.address = address;
+	
 	}
 
 	public UserDto() {
@@ -127,18 +131,20 @@ public class UserDto {
 	}
 
 	
-	 public User getUserFromUserDto(User userdto) {
+	
+	public User getUserFromUserDto(UserDto userDto) {
 		 var user=new User();
-		 user.setAddress(userdto.getAddress());
-		 user.setBank(userdto.getBank());
-		 user.setEmailId(userdto.getEmailId());
-		 user.setMobileNo(userdto.getMobileNo());
-		 user.setPassword(userdto.getPassword());
-		 user.setUserFullName(userdto.getUserFullName());
-		 user.setUserId(userdto.getUserId());
-		 user.setUserName(userdto.getUserName());
-		 user.setUserStatus(userdto.getUserStatus());
-		 user.setUserType(userdto.getUserType());;
+		 
+		 user.setAddress(userDto.address.getAddressFromAddressDto(userDto.getAddress()));
+		 user.setBank(userDto.bank.getBankFromBankDto(userDto.getBank()));
+		 user.setEmailId(userDto.getEmailId());
+		 user.setMobileNo(userDto.getMobileNo());
+		 user.setPassword(userDto.getPassword());
+		 user.setUserFullName(userDto.getUserFullName());
+		 user.setUserId(userDto.getUserId());
+		 user.setUserName(userDto.getUserName());
+		 user.setUserStatus(userDto.getUserStatus());
+		 user.setUserType(userDto.getUserType());
 		 return user;
 		 
 	 } 

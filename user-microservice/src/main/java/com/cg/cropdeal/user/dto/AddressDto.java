@@ -20,6 +20,7 @@ public class AddressDto {
 	
 	private String country ;
 
+
 	public AddressDto(Long id, String houseNo, String streetName, String localityName, int pincode, String city,
 			String state, String country) {
 		super();
@@ -101,16 +102,16 @@ public class AddressDto {
 	}
 
 	public Address getAddressFromAddressDto(AddressDto addressdto) {
-		Address address =new Address();
-		address.setCity(addressdto.getCity());
-		address.setCountry(addressdto.getCountry());
-		address.setHouseNo(addressdto.getHouseNo());
-		address.setId(addressdto.getId());
-		address.setLocalityName(addressdto.getLocalityName());
-		address.setPincode(addressdto.getPincode());
-		address.setState(addressdto.getState());
-		address.setStreetName(addressdto.getStreetName());
-		return address;
+		var address1 =new Address();
+		address1.setCity(addressdto.getCity());
+		address1.setCountry(addressdto.getCountry());
+		address1.setHouseNo(addressdto.getHouseNo());
+		address1.setId(addressdto.getId());
+		address1.setLocalityName(addressdto.getLocalityName());
+		address1.setPincode(addressdto.getPincode());
+		address1.setState(addressdto.getState());
+		address1.setStreetName(addressdto.getStreetName());
+		return address1;
 	}
 
 }

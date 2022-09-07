@@ -2,7 +2,7 @@ package com.cg.cropdeal.user.service;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -15,8 +15,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.cg.cropdeal.user.model.Address;
-import com.cg.cropdeal.user.model.Bank;
+import com.cg.cropdeal.user.dto.AddressDto;
+import com.cg.cropdeal.user.dto.BankDto;
+import com.cg.cropdeal.user.dto.UserDto;
+
 import com.cg.cropdeal.user.model.User;
 import com.cg.cropdeal.user.repository.UserRepository;
 
@@ -30,11 +32,12 @@ import com.cg.cropdeal.user.repository.UserRepository;
 	
 	@Mock
 	private UserRepository userRepository;
+	
 
-	List<User> list=new ArrayList<>();
+	List<UserDto> list=new ArrayList<>();
 
-	User createUser() {
-		var user=new User();
+	UserDto createUser() {
+		var user=new UserDto();
 		user.setUserId((long)111);
 		user.setUserName("Harry123");
 		user.setUserType("Dealer");
@@ -43,13 +46,13 @@ import com.cg.cropdeal.user.repository.UserRepository;
 		user.setEmailId("harry@gmail.com");
 		user.setPassword("hp@123");
 		user.setMobileNo((long) 979876577);
-		var bank =new Bank();
+		var bank =new BankDto();
 	    bank.setAccountHolderName("Harry potter");
 		bank.setAccountNo((long)1324038664);
 		bank.setBankBranch("Dublin");
 		bank.setBankIFSC("BOA78754485");
 		bank.setBankName("Bank of America");
-		var add=new Address();
+		var add=new AddressDto();
 	    add.setCity("Boston");
 	    add.setCountry("America");
 	    add.setState("Georgia");
@@ -67,12 +70,12 @@ import com.cg.cropdeal.user.repository.UserRepository;
 	@Test
 	void testAddingUserGivesAppropriateStringOutput() {
 		
-		User user=createUser();
+		UserDto user=createUser();
 	    
 		list.add(user);
 		
 		
-		when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
+		when(userRepository.save(Mockito.any(User.class))).thenReturn(user.getUserFromUserDto(user));
 		String actualResult=userService.addUser(user);
 		String expectedResult="user Added";
 		assertEquals(expectedResult,actualResult);
@@ -82,19 +85,19 @@ import com.cg.cropdeal.user.repository.UserRepository;
 	@Test
 	void testRepositorySaveMethod() {
 		
-		User user=createUser();
-		when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
-		assertEquals("hp@123",userRepository.save(user).getPassword());
-		assertEquals("Harry123",userRepository.save(user).getUserName());
-		assertEquals("harry@gmail.com",userRepository.save(user).getEmailId());
-		assertEquals("Harry potter",userRepository.save(user).getUserFullName());
+		UserDto user=createUser();
+		when(userRepository.save(Mockito.any(User.class))).thenReturn(user.getUserFromUserDto(user));
+		assertEquals("hp@123",userRepository.save(user.getUserFromUserDto(user)).getPassword());
+		assertEquals("Harry123",userRepository.save(user.getUserFromUserDto(user)).getUserName());
+		assertEquals("harry@gmail.com",userRepository.save(user.getUserFromUserDto(user)).getEmailId());
+		assertEquals("Harry potter",userRepository.save(user.getUserFromUserDto(user)).getUserFullName());
 		
-		assertEquals("Dealer",userRepository.save(user).getUserType());
-		assertEquals("Bank of America",userRepository.save(user).getBank().getBankName());
-		assertEquals("BOA78754485",userRepository.save(user).getBank().getBankIFSC());
-		assertEquals("Wilson Street",userRepository.save(user).getAddress().getStreetName());
-		assertEquals("America",userRepository.save(user).getAddress().getCountry());
-		assertEquals("Wilson Area",userRepository.save(user).getAddress().getLocalityName());
+		assertEquals("Dealer",userRepository.save(user.getUserFromUserDto(user)).getUserType());
+		assertEquals("Bank of America",userRepository.save(user.getUserFromUserDto(user)).getBank().getBankName());
+		assertEquals("BOA78754485",userRepository.save(user.getUserFromUserDto(user)).getBank().getBankIFSC());
+		assertEquals("Wilson Street",userRepository.save(user.getUserFromUserDto(user)).getAddress().getStreetName());
+		assertEquals("America",userRepository.save(user.getUserFromUserDto(user)).getAddress().getCountry());
+		assertEquals("Wilson Area",userRepository.save(user.getUserFromUserDto(user)).getAddress().getLocalityName());
 		
 		
 	}
@@ -103,15 +106,15 @@ import com.cg.cropdeal.user.repository.UserRepository;
 	void testUserData() {
 		
 		
-		User user=createUser();
-		when(userRepository.save(Mockito.any(User.class))).thenReturn(user);
-		assertEquals(111,userRepository.save(user).getUserId());
+		UserDto user=createUser();
+		when(userRepository.save(Mockito.any(User.class))).thenReturn(user.getUserFromUserDto(user));
+		assertEquals(111,userRepository.save(user.getUserFromUserDto(user)).getUserId());
 	}
 	
 	
 	@Test
 	void testcount() {
-		User user=createUser();
+		UserDto user=createUser();
 		assertEquals(0,list.size());
 		list.add(user);
 		assertEquals(1,list.size());
