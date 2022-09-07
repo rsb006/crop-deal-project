@@ -1,6 +1,5 @@
 package com.cg.cropdeal.authentication.controller;
 
-import com.cg.cropdeal.authentication.model.Account;
 import com.cg.cropdeal.authentication.model.MyRequestModel;
 import com.cg.cropdeal.authentication.model.MyResponseModel;
 import com.cg.cropdeal.authentication.security.MyAuthenticationManager;
@@ -86,7 +85,7 @@ public class AuthRestController {
 	}
 	
 	@PostMapping("/validate-token")
-	public ResponseEntity<Account> validateToken(@RequestParam String token) {
+	public ResponseEntity<MyResponseModel> validateToken(@RequestParam String token) {
 		return ResponseEntity.ok(accountServiceImpl.validateToken(token));
 	}
 }

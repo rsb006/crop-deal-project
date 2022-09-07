@@ -156,7 +156,7 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 	
 	@Override
 	//	helper method for api gateway to validate token
-	public Account validateToken(String token) {
+	public MyResponseModel validateToken(String token) {
 		if (token == null || token.isBlank()) throw new InvalidCredentialsException("Token cannot be empty.");
 //		get the subject from token
 		String subject = jwtUtil.getUsernameFromToken(token);
@@ -165,7 +165,7 @@ public class AccountServiceImpl implements UserDetailsService, IAccountService {
 //		validate
 		if (jwtUtil.validateToken(token, account)) {
 			account.setPassword(null);
-			return account;
+			return new MyResponseModel(jwtUtil.generateToken(account));
 		}
 		throw new UserNotFoundException("Invalid token");
 	}
