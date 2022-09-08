@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CropsComponent } from './crops/crops.component';
 import { CropsRoutingModule } from './crops-routing.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -11,7 +12,8 @@ import { CropsRoutingModule } from './crops-routing.module';
   ],
   imports: [
     CommonModule,
-    CropsRoutingModule
+    CropsRoutingModule,
+    NgbModule
   ]
 })
 export class CropsModule { }
