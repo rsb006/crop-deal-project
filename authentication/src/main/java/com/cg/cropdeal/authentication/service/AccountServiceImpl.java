@@ -1,72 +1,172 @@
 package com.cg.cropdeal.authentication.service;
 
 import com.cg.cropdeal.authentication.dao.IAccountRepository;
-import com.cg.cropdeal.authentication.exception.InvalidCredentialsException;
-import com.cg.cropdeal.authentication.exception.InvalidPasswordException;
-import com.cg.cropdeal.authentication.exception.UserAlreadyExistsException;
-import com.cg.cropdeal.authentication.exception.UserNotFoundException;
+import com.cg.cropdeal.authentication.exception.*;
+import com.cg.cropdeal.authentication.exception.handler.PhoneNumberNotFoundException;
 import com.cg.cropdeal.authentication.model.Account;
+import com.cg.cropdeal.authentication.model.MyRequestModel;
+import com.cg.cropdeal.authentication.model.MyResponseModel;
+import com.cg.cropdeal.authentication.security.jwt.JwtUtil;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
-public class AccountServiceImpl implements IAccountService {
-
+public class AccountServiceImpl implements UserDetailsService, IAccountService {
+	private final IAccountRepository repository;
+	private final BCryptPasswordEncoder passwordEncoder;
+	private final EmailServiceImpl emailService;
+	private final SmsService smsService;
+	private final JwtUtil jwtUtil;
+	
 	@Autowired
-	IAccountRepository acRepo;
-
-	// sign up user with email, password and full_name
+	public AccountServiceImpl(IAccountRepository repository, BCryptPasswordEncoder passwordEncoder,
+	                          EmailServiceImpl emailService, SmsService smsService, JwtUtil jwtUtil) {
+		this.repository = repository;
+		this.passwordEncoder = passwordEncoder;
+		this.emailService = emailService;
+		this.smsService = smsService;
+		this.jwtUtil = jwtUtil;
+	}
+	
 	@Override
-	public Account signUpWithEmail (Account ac) {
-		// check for empty values in account object
-		if (Objects.isNull(ac.getEmail()) || ac.getEmail().isBlank()) {
-			throw new InvalidCredentialsException("Email cannot be empty.");
+	public UserDetails loadUserByUsername(String email) throws UserNotFoundException {
+		Account user = repository.findByEmail(email);
+		if (user == null) {
+			throw new UserNotFoundException("User not found with given email: " + email);
 		}
-		if (Objects.isNull(ac.getPassword()) || ac.getPassword().isBlank()) {
-			throw new InvalidCredentialsException("Password cannot be empty.");
+		return user;
+	}
+	
+	@Override
+	public MyResponseModel signUpWithEmail(MyRequestModel req) {
+		if (!req.signUpValidation()) {
+			throw new InvalidCredentialsException("Field(s) cannot be empty.");
 		}
-		if (Objects.isNull(ac.getFullName()) || ac.getFullName().isBlank()) {
-			throw new InvalidCredentialsException("Name field cannot be empty.");
-		}
-
+		
 		// check if account object already exist in database
-		Account dataFromDb = acRepo.findByEmail(ac.getEmail());
+		Account dataFromDb = repository.findByEmail(req.getEmail());
 		if (Objects.isNull(dataFromDb)) {
 			// if account object doesn't already exist in database
 			// save the account object into database
-			acRepo.save(ac);
-			ac.setPassword(null);
-			return ac;
+			String encryptedPwd = passwordEncoder.encode(req.getPassword());
+			req.setPassword(encryptedPwd);
+			Account account = new Account(req);
+			repository.save(account);
+			String JWT_TOKEN = jwtUtil.generateToken(account);
+			return new MyResponseModel(JWT_TOKEN);
 		}
 		// if account object already exist in database throw exception
 		throw new UserAlreadyExistsException("User account already exists.");
 	}
-
-	// sign in with email and password functionality
+	
 	@Override
-	public Account signInWithEmail (Account ac) {
+	public MyResponseModel signInWithEmail(MyRequestModel req) {
 		// check for empty values in account object
-		if (Objects.isNull(ac.getEmail()) || ac.getEmail().isBlank()) {
-			throw new InvalidCredentialsException("Username cannot be empty.");
+		if (!req.signInValidation()) {
+			throw new InvalidCredentialsException("Email/Password field(s) cannot be empty.");
 		}
-		if (Objects.isNull(ac.getPassword()) || ac.getPassword().isBlank()) {
-			throw new InvalidCredentialsException("Password cannot be empty.");
-		}
+		
 		// check if account object exist in database
-		Account acFromDb = acRepo.findByEmail(ac.getEmail());
-		if (!Objects.isNull(acFromDb)) {
+		Account account = repository.findByEmail(req.getEmail());
+		if (!Objects.isNull(account)) {
 			// check if password is correct
-			if (ac.getPassword().equals(acFromDb.getPassword())) {
-				ac = acFromDb;
-				ac.setPassword(null);
-				return ac;
+			if (passwordEncoder.matches(req.getPassword(), account.getPassword())) {
+				String JWT_TOKEN = jwtUtil.generateToken(account);
+				return new MyResponseModel(JWT_TOKEN);
 			}
 			// throw exception if password is wrong
 			throw new InvalidPasswordException("Invalid password.");
 		}
 		// throw exception if account object is not in database
 		throw new UserNotFoundException("User does not exist.");
+	}
+	
+	
+	public Boolean validateOTP(MyRequestModel req) {
+		String otp = req.getResetCode();
+		if (otp != null && !otp.isBlank()) {
+			Account account = repository.findByResetCode(otp);
+			return account != null;
+		}
+		return false;
+	}
+	
+	@Override
+	public MyResponseModel resetPassword(MyRequestModel req, String resetToken) {
+		if (!req.resetPasswordValidation()) {
+			throw new InvalidCredentialsException("Password/Reset-token field(s) cannot be empty.");
+		}
+		
+		String password = req.getPassword();
+		
+		Account account = repository.findByResetCode(resetToken);
+		
+		if (account != null && account.getResetCode().equals(resetToken)) {
+			String encryptedPassword = passwordEncoder.encode(password);
+			account.setPassword(encryptedPassword);
+			account.setResetCode(null);
+			repository.save(account);
+			String JWT_TOKEN = jwtUtil.generateToken(account);
+			return new MyResponseModel(JWT_TOKEN);
+		}
+		
+		throw new InvalidSessionException("Invalid session. Please try " + "again later.");
+	}
+	
+	@Override
+	public String forgotPassword(String url, String email, String method) {
+		if (email == null || email.isBlank()) throw new InvalidCredentialsException("Email field cannot be empty.");
+		
+		Account account = repository.findByEmail(email);
+		
+		if (account == null) throw new UserNotFoundException("User with email: " + email + " not found.");
+
+//		if method value is otp, only then we will send sms, else we will send email
+		if (method.equalsIgnoreCase("otp")) {
+			
+			if (account.getPhoneNumber() == null) throw new PhoneNumberNotFoundException("Phone number not found.");
+			
+			Double otp = Math.floor(Math.random() * 10000 + Math.random() * 1000 + Math.random() * 100 + Math.random() * 10);
+			
+			account.setResetCode(otp.toString());
+			repository.save(account);
+			
+			smsService.sendOTP(account.getPhoneNumber(), otp.toString());
+			
+			return "Sms sent.";
+		} else {
+			final String resetCode = RandomString.make(20);
+			
+			account.setResetCode(resetCode);
+			repository.save(account);
+			
+			final String link = url + "/reset?token=" + resetCode;
+			
+			emailService.resetPasswordMail(account.getUsername(), account.getFullName(), link);
+			
+			return "Email sent.";
+		}
+	}
+	
+	@Override
+	//	helper method for api gateway to validate token
+	public MyResponseModel validateToken(String token) {
+		if (token == null || token.isBlank()) throw new InvalidCredentialsException("Token cannot be empty.");
+//		get the subject from token
+		String subject = jwtUtil.getUsernameFromToken(token);
+//		fetch the data from backend
+		Account account = repository.findByEmail(subject);
+//		validate
+		if (jwtUtil.validateToken(token, account)) {
+			account.setPassword(null);
+			return new MyResponseModel(jwtUtil.generateToken(account));
+		}
+		throw new UserNotFoundException("Invalid token");
 	}
 }

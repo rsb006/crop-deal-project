@@ -1,0 +1,36 @@
+package com.cg.cropdeal.gateway.config;
+
+import com.cg.cropdeal.gateway.model.MyResponseModel;
+import org.apache.http.HttpHeaders;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+@Component
+public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
+	
+	@Override
+	public GatewayFilter apply(AuthFilter.Config config) {
+		return (exchange, chain) -> {
+			if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+				throw new RuntimeException("Unauthorized!");
+			}
+			 
+			String[] header = exchange.getRequest().getHeaders()
+				.get(HttpHeaders.AUTHORIZATION).get(0).split(" ");
+			
+			if (header.length != 2 || !header[0].startsWith("Bearer")) {
+				throw new RuntimeException("Invalid authorization.");
+			}
+			
+			RestTemplate restTemplate = new RestTemplate();
+			restTemplate.getForObject("http://auth/validate-token?token=" + header[1], MyResponseModel.class);
+			
+			return chain.filter(exchange);
+		};
+	}
+	
+	public static class Config {
+	}
+}
