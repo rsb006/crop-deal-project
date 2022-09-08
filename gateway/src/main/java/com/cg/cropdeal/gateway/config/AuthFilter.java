@@ -16,7 +16,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 			if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
 				throw new RuntimeException("Unauthorized!");
 			}
-			
+			 
 			String[] header = exchange.getRequest().getHeaders()
 				.get(HttpHeaders.AUTHORIZATION).get(0).split(" ");
 			
