@@ -11,14 +11,10 @@ spring:
       uri: http://cropitem-ms
       predicates:
         Path=/crop/**
-      filters:
-      - AuthFilter
     - id: user-id
-      uri: http://user-microservice
+      uri: http://user
       predicates:
         Path=/user/**
-      filters:
-      - AuthFilter
     - id: auth-id
       uri: http://auth
       predicates:

@@ -10,6 +10,10 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
 	
+	public AuthFilter() {
+		super(Config.class);
+	}
+	
 	@Override
 	public GatewayFilter apply(AuthFilter.Config config) {
 		return (exchange, chain) -> {
@@ -25,7 +29,8 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 			}
 			
 			RestTemplate restTemplate = new RestTemplate();
-			restTemplate.getForObject("http://auth/validate-token?token=" + header[1], MyResponseModel.class);
+			restTemplate.postForObject("http://localhost:8090/auth/validate-token?token=" + header[1], null,
+				MyResponseModel.class);
 			
 			return chain.filter(exchange);
 		};

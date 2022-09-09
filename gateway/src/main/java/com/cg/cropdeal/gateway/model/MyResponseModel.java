@@ -2,6 +2,7 @@ package com.cg.cropdeal.gateway.model;
 
 public class MyResponseModel {
 	private String jwt;
+
 	
 	MyResponseModel() {
 	}
@@ -13,4 +14,7 @@ public class MyResponseModel {
 	public void setJwt(String jwt) {
 		this.jwt = jwt;
 	}
+	
+
+	
 }
