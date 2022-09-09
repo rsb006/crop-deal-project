@@ -7,6 +7,8 @@
         <option value="$PROJECT_DIR$/discovery-server/pom.xml" />
         <option value="$PROJECT_DIR$/gateway/pom.xml" />
         <option value="$PROJECT_DIR$/cloudconfig/pom.xml" />
+        <option value="$PROJECT_DIR$/cropitems/pom.xml" />
+        <option value="$PROJECT_DIR$/user-microservice/pom.xml" />
       </list>
     </option>
   </component>
