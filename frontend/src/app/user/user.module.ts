@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { UserComponent } from './user/user.component';
 import { UserRoutingModule } from './user-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import {HttpClientModule} from '@angular/common/http';
 
 
 @NgModule({
@@ -13,7 +13,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [
     CommonModule,
     UserRoutingModule,
-    NgbModule
+    NgbModule,
+    HttpClientModule
   ]
 })
 export class UserModule { }
