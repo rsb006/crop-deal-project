@@ -4,11 +4,13 @@ import { UserComponent } from './user/user.component';
 import { UserRoutingModule } from './user-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {HttpClientModule} from '@angular/common/http';
+import { NavbarComponent } from './navbar/navbar.component';
 
 
 @NgModule({
   declarations: [
-    UserComponent
+    UserComponent,
+    NavbarComponent
   ],
   imports: [
     CommonModule,

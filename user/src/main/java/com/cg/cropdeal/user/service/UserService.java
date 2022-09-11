@@ -277,7 +277,13 @@ public class UserService implements IUserService{
 	}
 
 
-	
+	public User getUserByUserName(String userName) {
+		User user=userRepository.getByUserName(userName);
+		if(user!=null)
+			return user;
+		else
+			return null;
+	}
 	
 
 }

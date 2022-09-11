@@ -23,7 +23,8 @@ const routes: Routes = [
   },
   {
     path: '**', pathMatch: 'full', redirectTo: 'NavComponent'
-  }
+  },
+
 ];
 
 @NgModule({
